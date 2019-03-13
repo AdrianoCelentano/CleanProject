@@ -1,4 +1,4 @@
-package com.clean.data
+package com.clean.data.remote
 
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
@@ -12,7 +12,8 @@ object GithubServiceFactory {
 
     fun makeGithubTrendingService(isDebug: Boolean): GithubService {
         val okHttpClient = makeOkHttpClient(
-            makeLoggingInterceptor((isDebug)))
+            makeLoggingInterceptor((isDebug))
+        )
         return makeGithubTrendingService(okHttpClient, Gson())
     }
 

@@ -1,7 +1,6 @@
-package com.clean.data
+package com.clean.data.remote
 
-import com.clean.data.model.ProjectsResponseModel
-import io.reactivex.Flowable
+import com.clean.data.remote.model.ProjectsResponseModel
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query

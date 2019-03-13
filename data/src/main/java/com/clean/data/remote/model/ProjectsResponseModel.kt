@@ -1,4 +1,4 @@
-package com.clean.data.model
+package com.clean.data.remote.model
 
 import com.google.gson.annotations.SerializedName
 
