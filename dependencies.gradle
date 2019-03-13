@@ -16,6 +16,8 @@ ext {
     timberVersion = '4.5.1'
     glideVersion = '4.0.0'
     daggerVersion = '2.11'
+    javaxAnnotationVersion = '1.0'
+    javaxInjectVersion = '1'
 
     //Testing
     jUnitVersion = '4.12'
@@ -24,6 +26,8 @@ ext {
     mockitoKotlinVersion = '1.5.0'
 
     dataDependencies = [
+            javaxAnnotation  : "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
+            javaxInject      : "javax.inject:javax.inject:${javaxInjectVersion}",
             daggerCompiler   : "com.google.dagger:dagger-compiler:${daggerVersion}",
             dagger           : "com.google.dagger:dagger:${daggerVersion}",
             okHttp           : "com.squareup.okhttp3:okhttp:${okHttpVersion}",

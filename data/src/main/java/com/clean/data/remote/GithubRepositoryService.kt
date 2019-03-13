@@ -5,7 +5,7 @@ import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface GithubService {
+interface GithubRepositoryService {
 
     @GET("search/repositories")
     fun searchRepositories(@Query("q") query: String,
