@@ -28,14 +28,11 @@ ext {
     dataDependencies = [
             javaxAnnotation  : "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
             javaxInject      : "javax.inject:javax.inject:${javaxInjectVersion}",
-            daggerCompiler   : "com.google.dagger:dagger-compiler:${daggerVersion}",
-            dagger           : "com.google.dagger:dagger:${daggerVersion}",
             okHttp           : "com.squareup.okhttp3:okhttp:${okHttpVersion}",
             okHttpLogger     : "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}",
             gson             : "com.google.code.gson:gson:${gsonVersion}",
             rxKotlin         : "io.reactivex.rxjava2:rxkotlin:${rxKotlinVersion}",
             kotlin           : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}",
-            rxAndroid        : "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}",
             retrofit         : "com.squareup.retrofit2:retrofit:${retrofitVersion}",
             retrofitConverter: "com.squareup.retrofit2:converter-gson:${retrofitVersion}",
             retrofitAdapter  : "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}"
@@ -48,4 +45,17 @@ ext {
             mockito    : "com.nhaarman:mockito-kotlin:${mockitoKotlinVersion}",
     ]
 
+    domainDependencies = [
+            javaxAnnotation  : "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
+            javaxInject      : "javax.inject:javax.inject:${javaxInjectVersion}",
+            rxKotlin         : "io.reactivex.rxjava2:rxkotlin:${rxKotlinVersion}",
+            kotlin           : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}",
+    ]
+
+    domainTestDependencies = [
+            junit      : "junit:junit:${jUnitVersion}",
+            kotlinJUnit: "org.jetbrains.kotlin:kotlin-test-junit:${kotlin_version}",
+            assertj    : "org.assertj:assertj-core:${assertJVersion}",
+            mockito    : "com.nhaarman:mockito-kotlin:${mockitoKotlinVersion}",
+    ]
 }

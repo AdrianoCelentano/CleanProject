@@ -1,7 +1,16 @@
 apply plugin: 'java-library'
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    def domainDependencies = rootProject.ext.domainDependencies
+    def domainTestDependencies = rootProject.ext.domainTestDependencies
+
+    implementation domainDependencies.javaxAnnotation
+    implementation domainDependencies.javaxInject
+    implementation domainDependencies.kotlin
+    implementation domainDependencies.rxKotlin
+    testImplementation domainTestDependencies.junit
+    testImplementation domainTestDependencies.mockito
+    testImplementation domainTestDependencies.assertj
 }
 
 sourceCompatibility = "7"

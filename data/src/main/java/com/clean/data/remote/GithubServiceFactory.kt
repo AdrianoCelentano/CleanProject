@@ -10,21 +10,21 @@ import java.util.concurrent.TimeUnit
 
 object GithubServiceFactory {
 
-    fun makeGithubTrendingService(isDebug: Boolean): GithubRepositoryService {
+    fun makeGithubTrendingService(isDebug: Boolean): GithubProjectService {
         val okHttpClient = makeOkHttpClient(
             makeLoggingInterceptor((isDebug))
         )
         return makeGithubTrendingService(okHttpClient, Gson())
     }
 
-    private fun makeGithubTrendingService(okHttpClient: OkHttpClient, gson: Gson): GithubRepositoryService {
+    private fun makeGithubTrendingService(okHttpClient: OkHttpClient, gson: Gson): GithubProjectService {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.github.com/")
             .client(okHttpClient)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-        return retrofit.create(GithubRepositoryService::class.java)
+        return retrofit.create(GithubProjectService::class.java)
     }
 
     private fun makeOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {

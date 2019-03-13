@@ -6,7 +6,7 @@ import retrofit2.Response
 import java.lang.Exception
 import javax.inject.Inject
 
-class GithubProjectRemote @Inject constructor(private val githubRepositoryService: GithubRepositoryService) {
+class GithubProjectRemote @Inject constructor(private val githubRepositoryService: GithubProjectService) {
 
     fun getRepositories(query: String, sortBy: String, order: String): Observable<ProjectsResponseModel> {
         return githubRepositoryService.searchRepositories(query, sortBy, order)
