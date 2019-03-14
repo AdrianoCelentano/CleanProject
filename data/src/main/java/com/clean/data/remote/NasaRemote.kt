@@ -1,15 +1,14 @@
 package com.clean.data.remote
 
-import com.clean.data.remote.model.ProjectsResponseModel
-import io.reactivex.Observable
+import com.clean.data.remote.model.Asteroid
+import io.reactivex.Single
 import retrofit2.Response
-import java.lang.Exception
 import javax.inject.Inject
 
-class GithubProjectRemote @Inject constructor(private val githubRepositoryService: GithubProjectService) {
+class NasaRemote @Inject constructor(private val nasaService: NasaService) {
 
-    fun getRepositories(query: String, sortBy: String, order: String): Observable<ProjectsResponseModel> {
-        return githubRepositoryService.searchRepositories(query, sortBy, order)
+    fun getAsteroidOfTheDay(): Single<Asteroid> {
+        return nasaService.getAsteroidOfTheDay()
             .map { response ->
                 if (isResponseSuccessful(response)) {
                     return@map response.body()!!
@@ -20,10 +19,10 @@ class GithubProjectRemote @Inject constructor(private val githubRepositoryServic
             }
     }
 
-    private fun buildErrorMessage(response: Response<ProjectsResponseModel>) =
+    private fun buildErrorMessage(response: Response<Asteroid>) =
         "there was a network error, code: ${response.code()}, message: ${response.message()}"
 
-    private fun isResponseSuccessful(response: Response<ProjectsResponseModel>) =
+    private fun isResponseSuccessful(response: Response<Asteroid>) =
         response.isSuccessful && response.body() != null
 }
 

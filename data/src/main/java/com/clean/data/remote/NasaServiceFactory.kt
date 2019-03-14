@@ -8,23 +8,23 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-object GithubServiceFactory {
+object NasaServiceFactory {
 
-    fun makeGithubTrendingService(isDebug: Boolean): GithubProjectService {
+    fun makeGithubTrendingService(isDebug: Boolean): NasaService {
         val okHttpClient = makeOkHttpClient(
             makeLoggingInterceptor((isDebug))
         )
         return makeGithubTrendingService(okHttpClient, Gson())
     }
 
-    private fun makeGithubTrendingService(okHttpClient: OkHttpClient, gson: Gson): GithubProjectService {
+    private fun makeGithubTrendingService(okHttpClient: OkHttpClient, gson: Gson): NasaService {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.github.com/")
+            .baseUrl("https://api.nasa.gov/planetary/")
             .client(okHttpClient)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-        return retrofit.create(GithubProjectService::class.java)
+        return retrofit.create(NasaService::class.java)
     }
 
     private fun makeOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {

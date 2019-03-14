@@ -20,5 +20,6 @@ dependencies {
     testImplementation dataTestDependencies.junit
     testImplementation dataTestDependencies.mockito
     testImplementation dataTestDependencies.assertj
-    compile project(path: ':domain')
+
+    implementation project(":domain")
 }
