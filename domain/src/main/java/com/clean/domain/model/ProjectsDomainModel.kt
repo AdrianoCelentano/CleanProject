@@ -1,7 +1,8 @@
 package com.clean.domain.model
 
 data class ProjectModel(
-    val id: String, val name: String,
+    val id: String,
+    val name: String,
     val fullName: String,
     val starCount: Int,
     val dateCreated: String,
