@@ -1,6 +1,13 @@
-package com.clean.data.remote
+package com.clean.data.config
 
+import com.clean.data.BuildConfig
+import com.clean.data.NasaRepositoryImpl
+import com.clean.data.remote.NasaService
+import com.clean.domain.NasaRepository
 import com.google.gson.Gson
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -8,16 +15,16 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-object NasaServiceFactory {
+@Module(includes = [DataBindsModule::class])
+object DataModule {
 
-    fun makeGithubTrendingService(isDebug: Boolean): NasaService {
-        val okHttpClient = makeOkHttpClient(
-            makeLoggingInterceptor((isDebug))
-        )
-        return makeGithubTrendingService(okHttpClient, Gson())
-    }
+    @Provides
+    @JvmStatic
+    fun provideIsDebug() = BuildConfig.DEBUG
 
-    private fun makeGithubTrendingService(okHttpClient: OkHttpClient, gson: Gson): NasaService {
+    @Provides
+    @JvmStatic
+    fun provideNasaService(okHttpClient: OkHttpClient, gson: Gson): NasaService {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.nasa.gov/planetary/")
             .client(okHttpClient)
@@ -27,7 +34,9 @@ object NasaServiceFactory {
         return retrofit.create(NasaService::class.java)
     }
 
-    private fun makeOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+    @Provides
+    @JvmStatic
+    fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .connectTimeout(120, TimeUnit.SECONDS)
@@ -35,7 +44,15 @@ object NasaServiceFactory {
             .build()
     }
 
-    private fun makeLoggingInterceptor(isDebug: Boolean): HttpLoggingInterceptor {
+    @Provides
+    @JvmStatic
+    fun provideGson(): Gson {
+        return Gson()
+    }
+
+    @Provides
+    @JvmStatic
+    fun provideLoggingInterceptor(isDebug: Boolean): HttpLoggingInterceptor {
         val logging = HttpLoggingInterceptor()
         logging.level = if (isDebug) {
             HttpLoggingInterceptor.Level.BODY
@@ -44,5 +61,11 @@ object NasaServiceFactory {
         }
         return logging
     }
+}
 
+@Module
+interface DataBindsModule {
+
+    @Binds
+    fun bindNasaRepository(naseRepositoryImpl: NasaRepositoryImpl): NasaRepository
 }

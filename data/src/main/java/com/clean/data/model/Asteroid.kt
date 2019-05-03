@@ -1,4 +1,4 @@
-package com.clean.data.remote.model
+package com.clean.data.model
 
 data class Asteroid(
     val copyright: String,

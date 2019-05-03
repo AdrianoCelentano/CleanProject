@@ -1,11 +1,11 @@
 package com.clean.data.mapper
 
-import com.clean.data.remote.model.Asteroid
+import com.clean.data.model.Asteroid
 import javax.inject.Inject
 
-class AsteriodMapper @Inject constructor() : EntityMapper<Asteroid, com.clean.domain.Asteroid> {
+class AsteroidMapper @Inject constructor() {
 
-    override fun mapToEntity(data: Asteroid): com.clean.domain.Asteroid {
+    fun map(data: Asteroid): com.clean.domain.Asteroid {
         return com.clean.domain.Asteroid(
             copyright = data.copyright,
             date = data.date,

@@ -1,6 +1,6 @@
 package com.clean.data.remote
 
-import com.clean.data.remote.model.Asteroid
+import com.clean.data.model.Asteroid
 import io.reactivex.Single
 import retrofit2.Response
 import javax.inject.Inject
