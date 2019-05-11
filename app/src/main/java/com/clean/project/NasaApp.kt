@@ -1,12 +1,11 @@
 package com.clean.project
 
-import android.app.Activity
 import android.app.Application
-import com.clean.asteroids.ActivityInjector
-import com.clean.asteroids.MainActivity
+import com.clean.asteroids.config.CoreComponent
+import com.clean.asteroids.config.CoreComponentProvider
 import com.clean.data.config.DaggerDataComponent
 
-class NasaApp : Application(), ActivityInjector {
+class NasaApp : Application(), CoreComponentProvider {
 
     val appComponent: AppComponent by lazy {
         DaggerAppComponent.builder()
@@ -15,13 +14,7 @@ class NasaApp : Application(), ActivityInjector {
             .build()
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
-
-    override fun inject(activity: Activity) {
-        when (activity) {
-            is MainActivity -> appComponent.inject(activity)
-        }
+    override fun provide(): CoreComponent {
+        return appComponent
     }
 }

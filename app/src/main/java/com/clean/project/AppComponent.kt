@@ -1,20 +1,21 @@
 package com.clean.project
 
 import android.app.Application
-import com.clean.asteroids.MainActivity
+import com.clean.asteroids.config.CoreComponent
 import com.clean.data.config.DataComponent
+import com.clean.domain.GetAsteroidOfTheDay
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = arrayOf(AppModule::class, ActivityComponentModule::class),
+    modules = arrayOf(AppModule::class),
     dependencies = arrayOf(DataComponent::class)
 )
-interface AppComponent {
+interface AppComponent : CoreComponent {
 
-    fun inject(mainActivity: MainActivity)
+    override fun provideGetAsteroidOfTheDay(): GetAsteroidOfTheDay
 
     @Component.Builder
     interface Builder {

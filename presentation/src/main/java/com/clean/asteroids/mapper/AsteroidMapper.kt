@@ -1,5 +1,6 @@
-package com.clean.asteroids
+package com.clean.asteroids.mapper
 
+import com.clean.asteroids.model.Asteroid
 import javax.inject.Inject
 
 class AsteroidMapper @Inject constructor() {

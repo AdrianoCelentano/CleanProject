@@ -14,6 +14,7 @@ ext {
     retrofitVersion = '2.5.0'
     roomVersion = '1.0.0-alpha6'
     appcompatVersion = '1.0.2'
+    livecycleExtensionsVersion = '2.0.0'
     constraintlayoutVersion = '1.1.3'
     glideVersion = '4.3.1'
     timberVersion = '4.5.1'
@@ -35,7 +36,7 @@ ext {
             okHttpLogger     : "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}",
             gson             : "com.google.code.gson:gson:${gsonVersion}",
             rxKotlin         : "io.reactivex.rxjava2:rxkotlin:${rxKotlinVersion}",
-            rxJava         : "io.reactivex.rxjava2:rxjava:${rxJavaVersion}",
+            rxJava           : "io.reactivex.rxjava2:rxjava:${rxJavaVersion}",
             kotlin           : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}",
             retrofit         : "com.squareup.retrofit2:retrofit:${retrofitVersion}",
             retrofitConverter: "com.squareup.retrofit2:converter-gson:${retrofitVersion}",
@@ -67,16 +68,19 @@ ext {
     ]
 
     presentationDependencies = [
-            glide          : "com.github.bumptech.glide:glide:${glideVersion}",
-            glideCompiler  : "com.github.bumptech.glide:compiler:${glideVersion}",
-            constrainLayout: "androidx.constraintlayout:constraintlayout:${constraintlayoutVersion}",
-            appcompat      : "androidx.appcompat:appcompat:${appcompatVersion}",
-            javaxAnnotation: "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
-            javaxInject    : "javax.inject:javax.inject:${javaxInjectVersion}",
-            rxKotlin       : "io.reactivex.rxjava2:rxkotlin:${rxKotlinVersion}",
-            rxJava         : "io.reactivex.rxjava2:rxjava:${rxJavaVersion}",
-            rxAndroid      : "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}",
-            kotlin         : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}",
+            glide              : "com.github.bumptech.glide:glide:${glideVersion}",
+            glideCompiler      : "com.github.bumptech.glide:compiler:${glideVersion}",
+            constrainLayout    : "androidx.constraintlayout:constraintlayout:${constraintlayoutVersion}",
+            appcompat          : "androidx.appcompat:appcompat:${appcompatVersion}",
+            lifecycleExtensions: "androidx.lifecycle:lifecycle-extensions:${livecycleExtensionsVersion}",
+            javaxAnnotation    : "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
+            javaxInject        : "javax.inject:javax.inject:${javaxInjectVersion}",
+            rxKotlin           : "io.reactivex.rxjava2:rxkotlin:${rxKotlinVersion}",
+            rxJava             : "io.reactivex.rxjava2:rxjava:${rxJavaVersion}",
+            rxAndroid          : "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}",
+            kotlin             : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}",
+            dagger             : "com.google.dagger:dagger:${daggerVersion}",
+            daggerCompiler     : "com.google.dagger:dagger-compiler:${daggerVersion}"
     ]
 
     presentationTestDependencies = [

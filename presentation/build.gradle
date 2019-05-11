@@ -40,6 +40,7 @@ dependencies {
     def domainTestDependencies = rootProject.ext.presentationTestDependencies
 
     implementation presentationDependencies.appcompat
+    implementation presentationDependencies.lifecycleExtensions
     implementation presentationDependencies.glide
     kapt presentationDependencies.glideCompiler
     implementation presentationDependencies.constrainLayout
@@ -49,6 +50,9 @@ dependencies {
     implementation presentationDependencies.rxKotlin
     implementation presentationDependencies.rxJava
     implementation presentationDependencies.rxAndroid
+    implementation dataDependencies.retrofitAdapter
+    implementation dataDependencies.dagger
+    kapt dataDependencies.daggerCompiler
 
     testImplementation domainTestDependencies.junit
     testImplementation domainTestDependencies.mockito

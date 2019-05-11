@@ -1,4 +1,4 @@
-package com.clean.asteroids
+package com.clean.asteroids.model
 
 data class Asteroid(
     val imageUrl: String? = null,
