@@ -1,20 +1,21 @@
 package com.clean.data.mapper
 
-import com.clean.data.model.Asteroid
+import com.clean.data.model.Asteroid as DataAsteroid
+import com.clean.domain.Asteroid as DomainAsteroid
 import javax.inject.Inject
 
 class AsteroidMapper @Inject constructor() {
 
-    fun map(data: Asteroid): com.clean.domain.Asteroid {
-        return com.clean.domain.Asteroid(
-            copyright = data.copyright,
-            date = data.date,
-            explanation = data.explanation,
-            hdurl = data.hdurl,
-            media_type = data.media_type,
-            service_version = data.service_version,
-            title = data.title,
-            url = data.url
+    fun map(dataAsteroid: DataAsteroid): DomainAsteroid {
+        return DomainAsteroid(
+            copyright = dataAsteroid.copyright,
+            date = dataAsteroid.date,
+            explanation = dataAsteroid.explanation,
+            hdurl = dataAsteroid.hdurl,
+            media_type = dataAsteroid.media_type,
+            service_version = dataAsteroid.service_version,
+            title = dataAsteroid.title,
+            url = dataAsteroid.url
         )
     }
 }
