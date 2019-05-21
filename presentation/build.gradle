@@ -42,6 +42,7 @@ dependencies {
     implementation presentationDependencies.appcompat
     implementation presentationDependencies.lifecycleExtensions
     implementation presentationDependencies.glide
+    implementation presentationDependencies.ktxFragment
     kapt presentationDependencies.glideCompiler
     implementation presentationDependencies.constrainLayout
     implementation presentationDependencies.javaxAnnotation

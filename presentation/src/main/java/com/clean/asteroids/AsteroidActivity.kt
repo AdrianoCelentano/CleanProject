@@ -1,6 +1,7 @@
 package com.clean.asteroids
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,9 +17,9 @@ import javax.inject.Inject
 class AsteroidActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var viemModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var asteroidViewModel: AsteroidViewModel
+    private val asteroidViewModel: AsteroidViewModel by viewModels(::viewModelFactory)
 
     private var component: PresentationComponent? = null
 
@@ -26,7 +27,6 @@ class AsteroidActivity : AppCompatActivity() {
         injectMembers()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        asteroidViewModel = ViewModelProviders.of(this, viemModelFactory).get(AsteroidViewModel::class.java)
         observeAsteroidData()
     }
 
