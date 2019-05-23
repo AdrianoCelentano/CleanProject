@@ -1,13 +1,14 @@
 package com.clean.data.remote
 
 import com.clean.data.model.Asteroid
+import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.Response
 import javax.inject.Inject
 
 class NasaRemote @Inject constructor(private val nasaService: NasaService) {
 
-    fun getAsteroidOfTheDay(): Single<Asteroid> {
+    fun getAsteroidOfTheDay(): Observable<Asteroid> {
         return nasaService.getAsteroidOfTheDay()
             .map { response ->
                 if (isResponseSuccessful(response)) {
