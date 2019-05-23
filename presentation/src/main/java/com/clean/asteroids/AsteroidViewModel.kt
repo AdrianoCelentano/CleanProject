@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.clean.asteroids.model.Asteroid
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -26,18 +27,25 @@ class AsteroidViewModel @Inject constructor(
         get() = viewStateMutableLive
 
     init {
-        intentSubject
-            .startWith(ViewIntent.Init)
-            .doOnNext { Log.d("qwer", "intent: $it") }
-            .flatMap(intentToResultProcessor::process)
-            .doOnNext { Log.d("qwer", "result: $it") }
-            .compose(viewStateReducer.reduce())
+        IntentToResult(intentToResultProcessor).publish { share ->
+            share.ofType(Result.Effect::class.java)
+            share.ofType(Result.NewAsteroid::class.java)
+        }.compose(viewStateReducer.reduce())
             .doOnNext { Log.d("qwer", "viewstate: $it") }
+            .distinctUntilChanged()
             .subscribeOn(Schedulers.io())
             .subscribeBy(
                 onNext = { viewStateMutableLive.postValue(it) },
                 onError = { Log.e("qwer", "error", it) }
             ).addTo(disposables)
+    }
+
+    private fun IntentToResult(intentToResultProcessor: IntentToResultProcessor): Observable<Result> {
+        return intentSubject
+            .startWith(ViewIntent.Init)
+            .doOnNext { Log.d("qwer", "intent: $it") }
+            .flatMap(intentToResultProcessor::process)
+            .doOnNext { Log.d("qwer", "result: $it") }
     }
 
     override fun onCleared() {
@@ -58,5 +66,5 @@ sealed class ViewIntent {
 
 sealed class Result {
     data class NewAsteroid(val asteroid: Asteroid) : Result()
-    object NoChange : Result()
+    object Effect : Result()
 }

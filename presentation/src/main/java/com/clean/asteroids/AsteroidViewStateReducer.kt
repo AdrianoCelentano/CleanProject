@@ -11,7 +11,7 @@ class AsteroidViewStateReducer @Inject constructor() {
             it.scan(AsteroidViewState(null, false, null))
             { oldviewstate: AsteroidViewState, result: Result ->
                 when (result) {
-                    is Result.NoChange -> {
+                    is Result.Effect -> {
                         oldviewstate
                     }
                     is Result.NewAsteroid -> {

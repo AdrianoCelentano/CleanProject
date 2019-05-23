@@ -14,7 +14,7 @@ class IntentToResultProcessor @Inject constructor(private val getAsteroidOfTheDa
     fun process(viewIntent: ViewIntent): Observable<Result> {
         return when (viewIntent) {
             ViewIntent.Init -> getAsteroidUseCase()
-            ViewIntent.Store -> Observable.just(Result.NoChange)
+            ViewIntent.Store -> Observable.just(Result.Effect)
             ViewIntent.Refresh -> getAsteroidUseCase()
         }
     }
