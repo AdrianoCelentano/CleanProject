@@ -1,6 +1,7 @@
 package com.clean.asteroids
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer as LifecycleObserver
@@ -35,6 +36,7 @@ class AsteroidActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         observeModel()
+        observeEffects()
     }
 
     override fun onResume() {
@@ -60,6 +62,22 @@ class AsteroidActivity : AppCompatActivity() {
             ).addTo(disposables)
     }
 
+    private fun observeModel() {
+        asteroidViewModel.viewStateLive.observe(this, object : LifecycleObserver<AsteroidViewState> {
+            override fun onChanged(asteroidViewState: AsteroidViewState) {
+                render(asteroidViewState)
+            }
+        })
+    }
+
+    private fun observeEffects() {
+        asteroidViewModel.viewEffectLive.observe(this, object : LifecycleObserver<String> {
+            override fun onChanged(text: String) {
+                Toast.makeText(this@AsteroidActivity, text, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
     private fun StoreButtonObservable(): Observable<ViewIntent> {
         return StoreButton.clicks()
             .map { ViewIntent.Store }
@@ -68,14 +86,6 @@ class AsteroidActivity : AppCompatActivity() {
     private fun RefreshButtonObservable(): Observable<ViewIntent> {
         return RefreshButton.clicks()
             .map { ViewIntent.Refresh }
-    }
-
-    private fun observeModel() {
-        asteroidViewModel.viewStateLive.observe(this, object : LifecycleObserver<AsteroidViewState> {
-            override fun onChanged(asteroidViewState: AsteroidViewState) {
-                render(asteroidViewState)
-            }
-        })
     }
 
     private fun render(asteroidViewState: AsteroidViewState) {

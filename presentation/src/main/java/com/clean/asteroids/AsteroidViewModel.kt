@@ -26,11 +26,37 @@ class AsteroidViewModel @Inject constructor(
     val viewStateLive
         get() = viewStateMutableLive
 
+    private val viewEffectMutableLive by lazy { MutableLiveData<String>() }
+
+    val viewEffectLive
+        get() = viewEffectMutableLive
+
     init {
-        IntentToResult(intentToResultProcessor).publish { share ->
-            share.ofType(Result.Effect::class.java)
+        intentToResult(intentToResultProcessor).publish { share ->
+            emitEffect(share)
             share.ofType(Result.NewAsteroid::class.java)
-        }.compose(viewStateReducer.reduce())
+        }.updateViewState(viewStateReducer)
+    }
+
+    private fun intentToResult(intentToResultProcessor: IntentToResultProcessor): Observable<Result> {
+        return intentSubject
+            .startWith(ViewIntent.Init)
+            .doOnNext { Log.d("qwer", "intent: $it") }
+            .flatMap(intentToResultProcessor::process)
+            .doOnNext { Log.d("qwer", "result: $it") }
+    }
+
+    private fun emitEffect(share: Observable<Result>) {
+        share.ofType(Result.Effect::class.java)
+            .subscribeBy(
+                onNext = {
+                    viewEffectMutableLive.postValue("test")
+                }
+            ).addTo(disposables)
+    }
+
+    private fun Observable<Result.NewAsteroid>.updateViewState(viewStateReducer: AsteroidViewStateReducer) {
+        compose(viewStateReducer.reduce())
             .doOnNext { Log.d("qwer", "viewstate: $it") }
             .distinctUntilChanged()
             .subscribeOn(Schedulers.io())
@@ -38,14 +64,6 @@ class AsteroidViewModel @Inject constructor(
                 onNext = { viewStateMutableLive.postValue(it) },
                 onError = { Log.e("qwer", "error", it) }
             ).addTo(disposables)
-    }
-
-    private fun IntentToResult(intentToResultProcessor: IntentToResultProcessor): Observable<Result> {
-        return intentSubject
-            .startWith(ViewIntent.Init)
-            .doOnNext { Log.d("qwer", "intent: $it") }
-            .flatMap(intentToResultProcessor::process)
-            .doOnNext { Log.d("qwer", "result: $it") }
     }
 
     override fun onCleared() {
