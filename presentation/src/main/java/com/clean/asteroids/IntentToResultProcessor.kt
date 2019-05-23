@@ -5,18 +5,23 @@ import com.clean.asteroids.mapper.AsteroidMapper
 import com.clean.asteroids.model.Asteroid
 import com.clean.domain.GetAsteroidOfTheDay
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.cast
+import javax.inject.Inject
 
-class IntentToResultProcessor(private val getAsteroidOfTheDay: GetAsteroidOfTheDay) {
+class IntentToResultProcessor @Inject constructor(private val getAsteroidOfTheDay: GetAsteroidOfTheDay,
+                                                  private val asteroidMapper: AsteroidMapper) {
 
-    fun process(viewIntent: ViewIntent): Observable<Asteroid> {
-        Log.d("qwer", "intent: ${viewIntent.javaClass.simpleName}")
+    fun process(viewIntent: ViewIntent): Observable<Result> {
         return when (viewIntent) {
             ViewIntent.Init -> getAsteroidUseCase()
-            ViewIntent.Store -> Observable.just(Asteroid())
+            ViewIntent.Store -> Observable.just(Result.NoChange)
             ViewIntent.Refresh -> getAsteroidUseCase()
         }
     }
 
-    private fun getAsteroidUseCase() =
-        getAsteroidOfTheDay.execute().map { AsteroidMapper().map(it) }
+    private fun getAsteroidUseCase(): Observable<Result> {
+        return getAsteroidOfTheDay.execute()
+            .map { asteroidMapper.map(it) }
+            .map { Result.NewAsteroid(it) }
+    }
 }

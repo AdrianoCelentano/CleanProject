@@ -11,7 +11,6 @@ import com.clean.asteroids.config.DaggerPresentationComponent
 import com.clean.asteroids.config.PresentationComponent
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -72,7 +71,7 @@ class AsteroidActivity : AppCompatActivity() {
     }
 
     private fun observeModel() {
-        asteroidViewModel.asteroidLive.observe(this, object : LifecycleObserver<AsteroidViewState> {
+        asteroidViewModel.viewStateLive.observe(this, object : LifecycleObserver<AsteroidViewState> {
             override fun onChanged(asteroidViewState: AsteroidViewState) {
                 render(asteroidViewState)
             }
