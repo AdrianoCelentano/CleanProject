@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer as LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.clean.asteroids.config.CoreComponentProvider
@@ -17,8 +16,8 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-
 import javax.inject.Inject
+import androidx.lifecycle.Observer as LifecycleObserver
 
 class AsteroidActivity : AppCompatActivity() {
 
@@ -55,10 +54,10 @@ class AsteroidActivity : AppCompatActivity() {
     }
 
     private fun observeEvents() {
-        Observable.merge<ViewIntent>(RefreshButtonObservable(), StoreButtonObservable())
+        Observable.merge<ViewEvent>(RefreshButtonObservable(), StoreButtonObservable())
             .observeOn(Schedulers.io())
             .subscribeBy(
-                onNext = { asteroidViewModel.processIntent(it) }
+                onNext = { asteroidViewModel.processEvent(it) }
             ).addTo(disposables)
     }
 
@@ -78,14 +77,14 @@ class AsteroidActivity : AppCompatActivity() {
         })
     }
 
-    private fun StoreButtonObservable(): Observable<ViewIntent> {
+    private fun StoreButtonObservable(): Observable<ViewEvent> {
         return StoreButton.clicks()
-            .map { ViewIntent.Store }
+            .map { ViewEvent.Store }
     }
 
-    private fun RefreshButtonObservable(): Observable<ViewIntent> {
+    private fun RefreshButtonObservable(): Observable<ViewEvent> {
         return RefreshButton.clicks()
-            .map { ViewIntent.Refresh }
+            .map { ViewEvent.Refresh }
     }
 
     private fun render(asteroidViewState: AsteroidViewState) {

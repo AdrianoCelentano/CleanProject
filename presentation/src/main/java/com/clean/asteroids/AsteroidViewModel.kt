@@ -13,7 +13,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class AsteroidViewModel @Inject constructor(
-    intentToResultProcessor: IntentToResultProcessor,
+    eventToResultProcessor: EventToResultProcessor,
     viewStateReducer: AsteroidViewStateReducer
 ) : ViewModel() {
 
@@ -29,13 +29,13 @@ class AsteroidViewModel @Inject constructor(
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
-    private val intentRelay: PublishRelay<ViewIntent> = PublishRelay.create()
+    private val eventRelay: PublishRelay<ViewEvent> = PublishRelay.create()
 
-    private val intentObservable get() = intentRelay.hide()
+    private val eventObservable get() = eventRelay.hide()
 
     init {
-        intentObservable
-            .intentToResult(intentToResultProcessor)
+        eventObservable
+            .eventToResult(eventToResultProcessor)
             .share()
             .also { sharedResultObservable ->
                 observeEffects(sharedResultObservable)
@@ -43,21 +43,21 @@ class AsteroidViewModel @Inject constructor(
             }
     }
 
+    fun processEvent(viewEvent: ViewEvent) {
+        eventRelay.accept(viewEvent)
+    }
+
     override fun onCleared() {
         super.onCleared()
         disposables.clear()
     }
 
-    fun processIntent(intent: ViewIntent) {
-        intentRelay.accept(intent)
-    }
-
-    private fun Observable<ViewIntent>.intentToResult(
-        intentToResultProcessor: IntentToResultProcessor
+    private fun Observable<ViewEvent>.eventToResult(
+        eventToResultProcessor: EventToResultProcessor
     ): Observable<Result> {
-        return startWith(ViewIntent.Init)
+        return startWith(ViewEvent.Init)
             .doOnNext { Log.d("qwer", "intent: $it") }
-            .concatMap(intentToResultProcessor::process)
+            .concatMap(eventToResultProcessor::process)
             .doOnNext { Log.d("qwer", "result: $it") }
     }
 
@@ -83,10 +83,10 @@ class AsteroidViewModel @Inject constructor(
     }
 }
 
-sealed class ViewIntent {
-    object Init : ViewIntent()
-    object Store : ViewIntent()
-    object Refresh : ViewIntent()
+sealed class ViewEvent {
+    object Init : ViewEvent()
+    object Store : ViewEvent()
+    object Refresh : ViewEvent()
 }
 
 sealed class Result {
