@@ -10,7 +10,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 class AsteroidViewModel @Inject constructor(
@@ -18,53 +17,30 @@ class AsteroidViewModel @Inject constructor(
     viewStateReducer: AsteroidViewStateReducer
 ) : ViewModel() {
 
-    val disposables: CompositeDisposable = CompositeDisposable()
-
-    val intentSubject: PublishRelay<ViewIntent> = PublishRelay.create()
-
-    private val viewStateMutableLive by lazy { MutableLiveData<AsteroidViewState>() }
-
     val viewStateLive
         get() = viewStateMutableLive
-
-    private val viewEffectMutableLive by lazy { MutableLiveData<String>() }
 
     val viewEffectLive
         get() = viewEffectMutableLive
 
+    private val viewStateMutableLive by lazy { MutableLiveData<AsteroidViewState>() }
+
+    private val viewEffectMutableLive by lazy { MutableLiveData<String>() }
+
+    private val disposables: CompositeDisposable = CompositeDisposable()
+
+    private val intentRelay: PublishRelay<ViewIntent> = PublishRelay.create()
+
+    private val intentObservable get() = intentRelay.hide()
+
     init {
-        intentToResult(intentToResultProcessor).publish { share ->
-            emitEffect(share)
-            share.ofType(Result.NewAsteroid::class.java)
-        }.updateViewState(viewStateReducer)
-    }
-
-    private fun intentToResult(intentToResultProcessor: IntentToResultProcessor): Observable<Result> {
-        return intentSubject
-            .startWith(ViewIntent.Init)
-            .doOnNext { Log.d("qwer", "intent: $it") }
-            .flatMap(intentToResultProcessor::process)
-            .doOnNext { Log.d("qwer", "result: $it") }
-    }
-
-    private fun emitEffect(share: Observable<Result>) {
-        share.ofType(Result.Effect::class.java)
-            .subscribeBy(
-                onNext = {
-                    viewEffectMutableLive.postValue("test")
-                }
-            ).addTo(disposables)
-    }
-
-    private fun Observable<Result.NewAsteroid>.updateViewState(viewStateReducer: AsteroidViewStateReducer) {
-        compose(viewStateReducer.reduce())
-            .doOnNext { Log.d("qwer", "viewstate: $it") }
-            .distinctUntilChanged()
-            .subscribeOn(Schedulers.io())
-            .subscribeBy(
-                onNext = { viewStateMutableLive.postValue(it) },
-                onError = { Log.e("qwer", "error", it) }
-            ).addTo(disposables)
+        intentObservable
+            .intentToResult(intentToResultProcessor)
+            .share()
+            .also { sharedResultObservable ->
+                observeEffects(sharedResultObservable)
+                observeViewStateChange(sharedResultObservable, viewStateReducer)
+            }
     }
 
     override fun onCleared() {
@@ -73,7 +49,37 @@ class AsteroidViewModel @Inject constructor(
     }
 
     fun processIntent(intent: ViewIntent) {
-        intentSubject.accept(intent)
+        intentRelay.accept(intent)
+    }
+
+    private fun Observable<ViewIntent>.intentToResult(
+        intentToResultProcessor: IntentToResultProcessor
+    ): Observable<Result> {
+        return startWith(ViewIntent.Init)
+            .doOnNext { Log.d("qwer", "intent: $it") }
+            .concatMap(intentToResultProcessor::process)
+            .doOnNext { Log.d("qwer", "result: $it") }
+    }
+
+    private fun observeEffects(share: Observable<Result>) {
+        share.ofType(Result.Effect::class.java)
+            .subscribeOn(Schedulers.io())
+            .subscribeBy(
+                onNext = { viewEffectMutableLive.postValue("test") },
+                onError = { Log.e("qwer", "error effect", it) }
+            ).addTo(disposables)
+    }
+
+    private fun observeViewStateChange(share: Observable<Result>, viewStateReducer: AsteroidViewStateReducer) {
+        share.ofType(Result.NewAsteroid::class.java)
+            .compose(viewStateReducer.reduce())
+            .doOnNext { Log.d("qwer", "viewstate: $it") }
+            .distinctUntilChanged()
+            .subscribeOn(Schedulers.io())
+            .subscribeBy(
+                onNext = { viewStateMutableLive.postValue(it) },
+                onError = { Log.e("qwer", "error viewstate", it) }
+            ).addTo(disposables)
     }
 }
 
