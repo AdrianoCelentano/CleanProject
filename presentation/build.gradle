@@ -63,6 +63,7 @@ dependencies {
     implementation presentationDependencies.kotlin
     implementation presentationDependencies.rxKotlin
     implementation presentationDependencies.rxJava
+    implementation presentationDependencies.rxRelay
     implementation presentationDependencies.rxAndroid
     implementation presentationDependencies.rxBindings
     implementation dataDependencies.retrofitAdapter

@@ -9,6 +9,7 @@ ext {
     rxKotlinVersion = '2.3.0'
     rxAndroidVersion = '2.1.1'
     rxJavaVersion = '2.2.8'
+    rxRelayVersion = '2.1.0'
     rxBindingsVersion = '2.2.0'
     ktxFragmentVersion = '1.1.0-alpha09'
     gsonVersion = '2.8.1'
@@ -80,6 +81,7 @@ ext {
             javaxInject        : "javax.inject:javax.inject:${javaxInjectVersion}",
             rxKotlin           : "io.reactivex.rxjava2:rxkotlin:${rxKotlinVersion}",
             rxJava             : "io.reactivex.rxjava2:rxjava:${rxJavaVersion}",
+            rxRelay            : "com.jakewharton.rxrelay2:rxrelay:${rxRelayVersion}",
             rxAndroid          : "io.reactivex.rxjava2:rxandroid:${rxAndroidVersion}",
             rxBindings         : "com.jakewharton.rxbinding2:rxbinding-kotlin:${rxBindingsVersion}",
             kotlin             : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}",

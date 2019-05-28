@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.clean.asteroids.model.Asteroid
+import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -19,7 +20,7 @@ class AsteroidViewModel @Inject constructor(
 
     val disposables: CompositeDisposable = CompositeDisposable()
 
-    val intentSubject: PublishSubject<ViewIntent> = PublishSubject.create()
+    val intentSubject: PublishRelay<ViewIntent> = PublishRelay.create()
 
     private val viewStateMutableLive by lazy { MutableLiveData<AsteroidViewState>() }
 
@@ -72,7 +73,7 @@ class AsteroidViewModel @Inject constructor(
     }
 
     fun processIntent(intent: ViewIntent) {
-        intentSubject.onNext(intent)
+        intentSubject.accept(intent)
     }
 }
 
