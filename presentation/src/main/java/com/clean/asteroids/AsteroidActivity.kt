@@ -89,8 +89,8 @@ class AsteroidActivity : AppCompatActivity() {
 
     private fun render(asteroidViewState: AsteroidViewState) {
         val asteroid = asteroidViewState.asteroid
-        Text.text = asteroid?.name
-        Glide.with(this@AsteroidActivity).load(asteroid?.imageUrl).into(Image);
+        Text.text = asteroid?.title
+        Glide.with(this@AsteroidActivity).load(asteroid?.url).into(Image);
     }
 
     private fun injectMembers() {

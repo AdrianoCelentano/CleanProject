@@ -3,7 +3,7 @@ package com.clean.asteroids
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.clean.asteroids.model.Asteroid
+import com.clean.domain.Asteroid
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
