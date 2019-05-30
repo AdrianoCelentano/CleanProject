@@ -1,20 +1,21 @@
-package com.clean.asteroids
+package com.clean.domain
 
-import android.util.Log
+import com.clean.domain.AsteroidViewState
+import com.clean.domain.ViewResult
 import io.reactivex.ObservableTransformer
 import javax.inject.Inject
 
 class AsteroidViewStateReducer @Inject constructor() {
 
-    fun reduce(): ObservableTransformer<Result, AsteroidViewState> {
+    fun reduce(): ObservableTransformer<ViewResult, AsteroidViewState> {
         return ObservableTransformer {
             it.scan(AsteroidViewState(null, false, null))
-            { oldviewstate: AsteroidViewState, result: Result ->
+            { oldviewstate: AsteroidViewState, result: ViewResult ->
                 when (result) {
-                    is Result.Effect -> {
+                    is ViewResult.Effect -> {
                         oldviewstate
                     }
-                    is Result.NewAsteroid -> {
+                    is ViewResult.NewAsteroid -> {
                         AsteroidViewState(result.asteroid, false, null)
                     }
                 }

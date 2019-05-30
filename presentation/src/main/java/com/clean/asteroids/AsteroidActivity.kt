@@ -9,6 +9,8 @@ import com.bumptech.glide.Glide
 import com.clean.asteroids.config.CoreComponentProvider
 import com.clean.asteroids.config.DaggerPresentationComponent
 import com.clean.asteroids.config.PresentationComponent
+import com.clean.domain.AsteroidViewState
+import com.clean.domain.ViewEvent
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable

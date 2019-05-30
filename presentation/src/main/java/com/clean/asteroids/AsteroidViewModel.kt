@@ -3,7 +3,7 @@ package com.clean.asteroids
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.clean.domain.Asteroid
+import com.clean.domain.*
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -54,15 +54,15 @@ class AsteroidViewModel @Inject constructor(
 
     private fun Observable<ViewEvent>.eventToResult(
         eventToResultProcessor: EventToResultProcessor
-    ): Observable<Result> {
+    ): Observable<ViewResult> {
         return startWith(ViewEvent.Init)
             .doOnNext { Log.d("qwer", "intent: $it") }
             .concatMap(eventToResultProcessor::process)
             .doOnNext { Log.d("qwer", "result: $it") }
     }
 
-    private fun observeEffects(share: Observable<Result>) {
-        share.ofType(Result.Effect::class.java)
+    private fun observeEffects(share: Observable<ViewResult>) {
+        share.ofType(ViewResult.Effect::class.java)
             .subscribeOn(Schedulers.io())
             .subscribeBy(
                 onNext = { viewEffectMutableLive.postValue("test") },
@@ -70,8 +70,8 @@ class AsteroidViewModel @Inject constructor(
             ).addTo(disposables)
     }
 
-    private fun observeViewStateChange(share: Observable<Result>, viewStateReducer: AsteroidViewStateReducer) {
-        share.ofType(Result.NewAsteroid::class.java)
+    private fun observeViewStateChange(share: Observable<ViewResult>, viewStateReducer: AsteroidViewStateReducer) {
+        share.ofType(ViewResult.NewAsteroid::class.java)
             .compose(viewStateReducer.reduce())
             .doOnNext { Log.d("qwer", "viewstate: $it") }
             .distinctUntilChanged()
@@ -81,15 +81,4 @@ class AsteroidViewModel @Inject constructor(
                 onError = { Log.e("qwer", "error viewstate", it) }
             ).addTo(disposables)
     }
-}
-
-sealed class ViewEvent {
-    object Init : ViewEvent()
-    object Store : ViewEvent()
-    object Refresh : ViewEvent()
-}
-
-sealed class Result {
-    data class NewAsteroid(val asteroid: Asteroid) : Result()
-    object Effect : Result()
 }

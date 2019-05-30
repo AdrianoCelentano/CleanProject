@@ -1,4 +1,4 @@
-package com.clean.asteroids
+package com.clean.domain
 
 import com.clean.domain.Asteroid
 
