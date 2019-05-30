@@ -1,7 +1,7 @@
-package com.clean.domain
+package com.clean.domain.asteroid
 
+import com.clean.domain.asteroid.model.Asteroid
 import io.reactivex.Observable
-import io.reactivex.Single
 
 interface NasaRepository {
 

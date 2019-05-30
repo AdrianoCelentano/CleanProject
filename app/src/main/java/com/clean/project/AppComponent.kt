@@ -3,7 +3,7 @@ package com.clean.project
 import android.app.Application
 import com.clean.asteroids.config.CoreComponent
 import com.clean.data.config.DataComponent
-import com.clean.domain.GetAsteroidOfTheDay
+import com.clean.domain.asteroid.usecase.GetAsteroidOfTheDay
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton

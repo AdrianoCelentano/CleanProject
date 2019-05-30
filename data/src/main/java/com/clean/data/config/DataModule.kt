@@ -3,7 +3,7 @@ package com.clean.data.config
 import com.clean.data.BuildConfig
 import com.clean.data.NasaRepositoryImpl
 import com.clean.data.remote.NasaService
-import com.clean.domain.NasaRepository
+import com.clean.domain.asteroid.NasaRepository
 import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module

@@ -2,10 +2,9 @@ package com.clean.data
 
 import com.clean.data.mapper.AsteroidMapper
 import com.clean.data.remote.NasaRemote
-import com.clean.domain.Asteroid
-import com.clean.domain.NasaRepository
+import com.clean.domain.asteroid.NasaRepository
+import com.clean.domain.asteroid.model.Asteroid
 import io.reactivex.Observable
-import io.reactivex.Single
 import javax.inject.Inject
 
 class NasaRepositoryImpl @Inject constructor(

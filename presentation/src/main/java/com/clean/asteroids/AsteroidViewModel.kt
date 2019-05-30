@@ -3,7 +3,11 @@ package com.clean.asteroids
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.clean.domain.*
+import com.clean.domain.asteroid.AsteroidEventHandler
+import com.clean.domain.asteroid.AsteroidViewStateReducer
+import com.clean.domain.asteroid.model.AsteroidViewEvent
+import com.clean.domain.asteroid.model.AsteroidViewResult
+import com.clean.domain.asteroid.model.AsteroidViewState
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -13,7 +17,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class AsteroidViewModel @Inject constructor(
-    eventToResultProcessor: EventToResultProcessor,
+    eventHandler: AsteroidEventHandler,
     viewStateReducer: AsteroidViewStateReducer
 ) : ViewModel() {
 
@@ -25,25 +29,25 @@ class AsteroidViewModel @Inject constructor(
 
     private val viewStateMutableLive by lazy { MutableLiveData<AsteroidViewState>() }
 
-    private val viewEffectMutableLive by lazy { MutableLiveData<String>() }
+    private val viewEffectMutableLive by lazy { MutableLiveData<AsteroidViewResult.AsteroidViewEffect>() }
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
-    private val eventRelay: PublishRelay<ViewEvent> = PublishRelay.create()
+    private val eventRelay: PublishRelay<AsteroidViewEvent> = PublishRelay.create()
 
-    private val eventObservable get() = eventRelay.hide()
+    private val eventEmitter get() = eventRelay.hide()
 
     init {
-        eventObservable
-            .eventToResult(eventToResultProcessor)
+        eventEmitter
+            .handleEvent(eventHandler)
             .share()
-            .also { sharedResultObservable ->
-                observeEffects(sharedResultObservable)
-                observeViewStateChange(sharedResultObservable, viewStateReducer)
+            .also { sharedResultEmitter ->
+                observeEffects(sharedResultEmitter)
+                observeViewStateChange(sharedResultEmitter, viewStateReducer)
             }
     }
 
-    fun processEvent(viewEvent: ViewEvent) {
+    fun processEvent(viewEvent: AsteroidViewEvent) {
         eventRelay.accept(viewEvent)
     }
 
@@ -52,26 +56,29 @@ class AsteroidViewModel @Inject constructor(
         disposables.clear()
     }
 
-    private fun Observable<ViewEvent>.eventToResult(
-        eventToResultProcessor: EventToResultProcessor
-    ): Observable<ViewResult> {
-        return startWith(ViewEvent.Init)
+    private fun Observable<AsteroidViewEvent>.handleEvent(
+        eventToResultProcessor: AsteroidEventHandler
+    ): Observable<AsteroidViewResult> {
+        return startWith(AsteroidViewEvent.Init)
             .doOnNext { Log.d("qwer", "intent: $it") }
-            .concatMap(eventToResultProcessor::process)
+            .flatMap(eventToResultProcessor::process)
             .doOnNext { Log.d("qwer", "result: $it") }
     }
 
-    private fun observeEffects(share: Observable<ViewResult>) {
-        share.ofType(ViewResult.Effect::class.java)
+    private fun observeEffects(share: Observable<AsteroidViewResult>) {
+        share.ofType(AsteroidViewResult.AsteroidViewEffect::class.java)
             .subscribeOn(Schedulers.io())
             .subscribeBy(
-                onNext = { viewEffectMutableLive.postValue("test") },
-                onError = { Log.e("qwer", "error effect", it) }
+                onNext = { viewEffectMutableLive.postValue(it) },
+                onError = { Log.e("qwer", "error viewEffect", it) }
             ).addTo(disposables)
     }
 
-    private fun observeViewStateChange(share: Observable<ViewResult>, viewStateReducer: AsteroidViewStateReducer) {
-        share.ofType(ViewResult.NewAsteroid::class.java)
+    private fun observeViewStateChange(
+        share: Observable<AsteroidViewResult>,
+        viewStateReducer: AsteroidViewStateReducer
+    ) {
+        share.ofType(AsteroidViewResult.AsteroidPartialState::class.java)
             .compose(viewStateReducer.reduce())
             .doOnNext { Log.d("qwer", "viewstate: $it") }
             .distinctUntilChanged()

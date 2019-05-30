@@ -1,8 +1,8 @@
 package com.clean.data.mapper
 
-import com.clean.data.model.Asteroid as DataAsteroid
-import com.clean.domain.Asteroid as DomainAsteroid
 import javax.inject.Inject
+import com.clean.data.model.Asteroid as DataAsteroid
+import com.clean.domain.asteroid.model.Asteroid as DomainAsteroid
 
 class AsteroidMapper @Inject constructor() {
 

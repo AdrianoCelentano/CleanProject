@@ -1,4 +1,4 @@
-package com.clean.domain
+package com.clean.domain.asteroid.model
 
 data class Asteroid(
     val copyright: String? = null,

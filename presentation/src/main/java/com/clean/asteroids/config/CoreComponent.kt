@@ -1,6 +1,6 @@
 package com.clean.asteroids.config
 
-import com.clean.domain.GetAsteroidOfTheDay
+import com.clean.domain.asteroid.usecase.GetAsteroidOfTheDay
 
 interface CoreComponent {
 

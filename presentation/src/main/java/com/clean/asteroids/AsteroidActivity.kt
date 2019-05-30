@@ -1,6 +1,7 @@
 package com.clean.asteroids
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -9,8 +10,11 @@ import com.bumptech.glide.Glide
 import com.clean.asteroids.config.CoreComponentProvider
 import com.clean.asteroids.config.DaggerPresentationComponent
 import com.clean.asteroids.config.PresentationComponent
-import com.clean.domain.AsteroidViewState
-import com.clean.domain.ViewEvent
+import com.clean.domain.asteroid.model.AsteroidViewEvent
+import com.clean.domain.asteroid.model.AsteroidViewResult.AsteroidViewEffect
+import com.clean.domain.asteroid.model.AsteroidViewState
+import com.clean.domain.asteroid.model.ViewData
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -31,6 +35,8 @@ class AsteroidActivity : AppCompatActivity() {
     private var component: PresentationComponent? = null
 
     private val disposables = CompositeDisposable()
+
+    private var snackBar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         injectMembers()
@@ -56,7 +62,7 @@ class AsteroidActivity : AppCompatActivity() {
     }
 
     private fun observeEvents() {
-        Observable.merge<ViewEvent>(RefreshButtonObservable(), StoreButtonObservable())
+        Observable.merge<AsteroidViewEvent>(RefreshButtonObservable(), StoreButtonObservable())
             .observeOn(Schedulers.io())
             .subscribeBy(
                 onNext = { asteroidViewModel.processEvent(it) }
@@ -72,27 +78,65 @@ class AsteroidActivity : AppCompatActivity() {
     }
 
     private fun observeEffects() {
-        asteroidViewModel.viewEffectLive.observe(this, object : LifecycleObserver<String> {
-            override fun onChanged(text: String) {
-                Toast.makeText(this@AsteroidActivity, text, Toast.LENGTH_SHORT).show()
+        asteroidViewModel.viewEffectLive.observe(this, object : LifecycleObserver<AsteroidViewEffect> {
+            override fun onChanged(effect: AsteroidViewEffect) {
+                when (effect) {
+                    is AsteroidViewEffect.UserMessage -> showToast(effect)
+                }
             }
         })
     }
 
-    private fun StoreButtonObservable(): Observable<ViewEvent> {
+    private fun StoreButtonObservable(): Observable<AsteroidViewEvent> {
         return StoreButton.clicks()
-            .map { ViewEvent.Store }
+            .map { AsteroidViewEvent.Store }
     }
 
-    private fun RefreshButtonObservable(): Observable<ViewEvent> {
+    private fun RefreshButtonObservable(): Observable<AsteroidViewEvent> {
         return RefreshButton.clicks()
-            .map { ViewEvent.Refresh }
+            .map { AsteroidViewEvent.Refresh }
     }
 
     private fun render(asteroidViewState: AsteroidViewState) {
-        val asteroid = asteroidViewState.asteroid
-        Text.text = asteroid?.title
+        when {
+            asteroidViewState.loading == true -> showLoading()
+            asteroidViewState.errorMessage.isNullOrBlank().not() -> showErrorMessage(asteroidViewState.errorMessage!!)
+            asteroidViewState.data != null -> renderData(asteroidViewState.data!!)
+        }
+    }
+
+    private fun renderData(viewData: ViewData) {
+        hideLoading()
+        hideErrorMessage()
+        val asteroid = viewData.asteroid
+        Text.text = asteroid.title
         Glide.with(this@AsteroidActivity).load(asteroid?.url).into(Image);
+    }
+
+    private fun showErrorMessage(errorMessage: String) {
+        hideLoading()
+        showSnackBar(errorMessage)
+    }
+
+    private fun showToast(effect: AsteroidViewEffect.UserMessage) {
+        Toast.makeText(this@AsteroidActivity, effect.message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showLoading() {
+        LoadingIndicator.visibility = View.VISIBLE
+    }
+
+    private fun hideErrorMessage() {
+        snackBar?.dismiss()
+    }
+
+    private fun hideLoading() {
+        LoadingIndicator.visibility = View.INVISIBLE
+    }
+
+    private fun showSnackBar(errorMessage: String) {
+        snackBar = Snackbar.make(RootLayout, errorMessage, Snackbar.LENGTH_INDEFINITE)
+            .also { it.show() };
     }
 
     private fun injectMembers() {

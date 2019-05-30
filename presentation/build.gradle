@@ -75,4 +75,5 @@ dependencies {
     testImplementation domainTestDependencies.assertj
 
     implementation project(path: ':domain')
+    implementation 'com.google.android.material:material:1.0.0'
 }

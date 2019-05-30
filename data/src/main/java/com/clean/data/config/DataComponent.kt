@@ -1,6 +1,6 @@
 package com.clean.data.config
 
-import com.clean.domain.NasaRepository
+import com.clean.domain.asteroid.NasaRepository
 import dagger.Component
 
 @Component(modules = arrayOf(DataModule::class))
