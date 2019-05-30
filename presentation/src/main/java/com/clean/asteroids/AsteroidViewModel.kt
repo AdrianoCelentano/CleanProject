@@ -8,11 +8,11 @@ import com.clean.domain.asteroid.AsteroidViewStateReducer
 import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import com.clean.domain.asteroid.model.AsteroidViewState
+import com.clean.domain.util.rx.SimpleSubscriber
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -68,11 +68,15 @@ class AsteroidViewModel @Inject constructor(
     private fun observeEffects(share: Observable<AsteroidViewResult>) {
         share.ofType(AsteroidViewResult.AsteroidViewEffect::class.java)
             .subscribeOn(Schedulers.io())
-            .subscribeBy(
-                onNext = { viewEffectMutableLive.postValue(it) },
-                onError = { Log.e("qwer", "error viewEffect", it) }
-            ).addTo(disposables)
+            .subscribeWith(effectSubscriber)
+            .addTo(disposables)
     }
+
+    private val effectSubscriber
+        get() = SimpleSubscriber<AsteroidViewResult.AsteroidViewEffect>(
+            onNext = { effect -> viewEffectMutableLive.postValue(effect) },
+            onError = { error -> Log.e("qwer", "error viewEffect", error) }
+        )
 
     private fun observeViewStateChange(
         share: Observable<AsteroidViewResult>,
@@ -83,9 +87,13 @@ class AsteroidViewModel @Inject constructor(
             .doOnNext { Log.d("qwer", "viewstate: $it") }
             .distinctUntilChanged()
             .subscribeOn(Schedulers.io())
-            .subscribeBy(
-                onNext = { viewStateMutableLive.postValue(it) },
-                onError = { Log.e("qwer", "error viewstate", it) }
-            ).addTo(disposables)
+            .subscribeWith(viewStateSubscriber)
+            .addTo(disposables)
     }
+
+    private val viewStateSubscriber
+        get() = SimpleSubscriber<AsteroidViewState>(
+            onNext = { viewState -> viewStateLive.postValue(viewState) },
+            onError = { error -> Log.e("qwer", "error viewstate", error) }
+        )
 }
