@@ -8,6 +8,7 @@ import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import com.clean.domain.asteroid.model.AsteroidViewState
 import com.jakewharton.rxrelay2.PublishRelay
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -15,18 +16,15 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class AsteroidViewModel @Inject constructor(
-    private val asteroidViewFlow: AsteroidViewFlow
+    asteroidViewFlow: AsteroidViewFlow
 ) : ViewModel() {
 
     val viewStateLive
         get() = viewStateMutableLive
 
-    val viewEffectLive
-        get() = viewEffectMutableLive
+    val viewEffectEmitter: Observable<AsteroidViewResult.AsteroidViewEffect>
 
     private val viewStateMutableLive by lazy { MutableLiveData<AsteroidViewState>() }
-
-    private val viewEffectMutableLive by lazy { MutableLiveData<AsteroidViewResult.AsteroidViewEffect>() }
 
     private val eventRelay: PublishRelay<AsteroidViewEvent> = PublishRelay.create()
 
@@ -38,23 +36,22 @@ class AsteroidViewModel @Inject constructor(
         val (effectEmitter, viewStateEmitter) =
             asteroidViewFlow.start(eventEmitter)
 
+        observeViewState(viewStateEmitter)
+
+        this.viewEffectEmitter = effectEmitter
+    }
+
+    fun processEvent(viewEvent: AsteroidViewEvent) {
+        eventRelay.accept(viewEvent)
+    }
+
+    private fun observeViewState(viewStateEmitter: Observable<AsteroidViewState>) {
         viewStateEmitter
             .subscribeOn(Schedulers.io())
             .subscribeBy(
                 onNext = { viewState -> viewStateLive.postValue(viewState) },
                 onError = { error -> Log.e("qwer", "error viewstate", error) }
             ).addTo(disposables)
-
-        effectEmitter
-            .subscribeOn(Schedulers.io())
-            .subscribeBy(
-                onNext = { effect -> viewEffectMutableLive.postValue(effect) },
-                onError = { error -> Log.e("qwer", "error viewEffect", error) }
-            ).addTo(disposables)
-    }
-
-    fun processEvent(viewEvent: AsteroidViewEvent) {
-        eventRelay.accept(viewEvent)
     }
 
     override fun onCleared() {

@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetAsteroidOfTheDay @Inject constructor(private val nasaRepository: NasaRepository) {
 
     fun execute(): Observable<AsteroidViewResult> {
-        return Observable.concat(emitLoading(), emitAsteroid(), emitEffect())
+        return Observable.concat(emitLoading(), emitAsteroid(), emitUserMessageEffect())
             .onErrorReturn { throwable ->
                 when (throwable) {
                     is RemoteError -> AsteroidViewResult.AsteroidPartialState.Error("Error loading Asteroid from Server")
@@ -18,7 +18,7 @@ class GetAsteroidOfTheDay @Inject constructor(private val nasaRepository: NasaRe
             }
     }
 
-    private fun emitEffect(): Observable<AsteroidViewResult> {
+    private fun emitUserMessageEffect(): Observable<AsteroidViewResult> {
         return Observable.just(AsteroidViewResult.AsteroidViewEffect.UserMessage("message in a bottle"))
     }
 

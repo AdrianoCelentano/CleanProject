@@ -17,6 +17,7 @@ import com.clean.domain.asteroid.model.ViewData
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -43,12 +44,12 @@ class AsteroidActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         observeModel()
-        observeEffects()
     }
 
     override fun onResume() {
         super.onResume()
         observeEvents()
+        observeEffects()
     }
 
     override fun onPause() {
@@ -78,13 +79,20 @@ class AsteroidActivity : AppCompatActivity() {
     }
 
     private fun observeEffects() {
-        asteroidViewModel.viewEffectLive.observe(this, object : LifecycleObserver<AsteroidViewEffect> {
-            override fun onChanged(effect: AsteroidViewEffect) {
-                when (effect) {
-                    is AsteroidViewEffect.UserMessage -> showToast(effect)
+        asteroidViewModel.viewEffectEmitter
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onNext = { effect ->
+                    handleEffect(effect)
                 }
-            }
-        })
+            ).addTo(disposables)
+    }
+
+    private fun handleEffect(effect: AsteroidViewEffect?) {
+        when (effect) {
+            is AsteroidViewEffect.UserMessage -> showToast(effect)
+        }
     }
 
     private fun StoreButtonObservable(): Observable<AsteroidViewEvent> {
