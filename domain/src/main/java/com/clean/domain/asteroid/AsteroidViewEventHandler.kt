@@ -12,32 +12,9 @@ class AsteroidViewEventHandler @Inject constructor(
 
     fun process(viewEvent: AsteroidViewEvent): Observable<AsteroidViewResult> {
         return when (viewEvent) {
-            AsteroidViewEvent.Init -> getAsteroidUseCase()
+            AsteroidViewEvent.Init -> getAsteroidOfTheDay.execute()
             AsteroidViewEvent.Store -> Observable.just(AsteroidViewResult.AsteroidViewEffect.UserMessage("test"))
-            AsteroidViewEvent.Refresh -> getAsteroidUseCase()
+            AsteroidViewEvent.Refresh -> getAsteroidOfTheDay.execute()
         }
-    }
-
-    private fun getAsteroidUseCase(): Observable<AsteroidViewResult> {
-        return Observable.concat(emitLoading(), emitAsteroid(), emitEffect())
-            .onErrorReturn { throwable ->
-                when (throwable) {
-                    is Exception -> AsteroidViewResult.AsteroidPartialState.Error("Error loading Asteroid")
-                    else -> AsteroidViewResult.AsteroidPartialState.Error("Error loading Asteroid")
-                }
-            }
-    }
-
-    private fun emitEffect(): Observable<AsteroidViewResult> {
-        return Observable.just(AsteroidViewResult.AsteroidViewEffect.UserMessage("message in a bottle"))
-    }
-
-    private fun emitLoading(): Observable<AsteroidViewResult> {
-        return Observable.just(AsteroidViewResult.AsteroidPartialState.Loading)
-    }
-
-    private fun emitAsteroid(): Observable<AsteroidViewResult> {
-        return getAsteroidOfTheDay.execute()
-            .map { AsteroidViewResult.AsteroidPartialState.NewAsteroid(it) }
     }
 }
