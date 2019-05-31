@@ -25,10 +25,9 @@ class AsteroidViewFlow @Inject constructor(
     private fun Observable<AsteroidViewEvent>.handleEvent(
         eventToResultProcessor: AsteroidViewEventHandler
     ): Observable<AsteroidViewResult> {
-        return startWith(AsteroidViewEvent.Init)
-            .doOnNext { print("intent: $it") }
+        return doOnNext { println("flow intent: $it") }
             .flatMap(eventToResultProcessor::process)
-            .doOnNext { print("result: $it") }
+            .doOnNext { println("flow result: $it") }
     }
 
     private fun effectEmitter(
@@ -43,7 +42,7 @@ class AsteroidViewFlow @Inject constructor(
     ): Observable<AsteroidViewState> {
         return share.ofType(AsteroidViewResult.AsteroidPartialState::class.java)
             .compose(viewStateReducer.reduce())
-            .doOnNext { print("viewstate: $it") }
+            .doOnNext { println("flow viewstate: $it") }
             .distinctUntilChanged()
     }
 
