@@ -6,7 +6,7 @@ import com.clean.domain.asteroid.usecase.GetAsteroidOfTheDay
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class AsteroidEventHandler @Inject constructor(
+class AsteroidViewEventHandler @Inject constructor(
     private val getAsteroidOfTheDay: GetAsteroidOfTheDay
 ) {
 
