@@ -1,8 +1,8 @@
 package com.clean.data.remote
 
 import com.clean.data.model.Asteroid
+import com.clean.domain.asteroid.RemoteError
 import io.reactivex.Observable
-import io.reactivex.Single
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -26,5 +26,3 @@ class NasaRemote @Inject constructor(private val nasaService: NasaService) {
     private fun isResponseSuccessful(response: Response<Asteroid>) =
         response.isSuccessful && response.body() != null
 }
-
-class RemoteError(message: String) : Exception(message)

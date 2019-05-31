@@ -7,3 +7,5 @@ interface NasaRepository {
 
     fun getAsteroidOfTheDay(): Observable<Asteroid>
 }
+
+class RemoteError(message: String) : Exception(message)

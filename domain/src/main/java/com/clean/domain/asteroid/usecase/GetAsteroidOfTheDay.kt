@@ -1,6 +1,7 @@
 package com.clean.domain.asteroid.usecase
 
 import com.clean.domain.asteroid.NasaRepository
+import com.clean.domain.asteroid.RemoteError
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import io.reactivex.Observable
 import javax.inject.Inject
@@ -11,7 +12,7 @@ class GetAsteroidOfTheDay @Inject constructor(private val nasaRepository: NasaRe
         return Observable.concat(emitLoading(), emitAsteroid(), emitEffect())
             .onErrorReturn { throwable ->
                 when (throwable) {
-                    is Exception -> AsteroidViewResult.AsteroidPartialState.Error("Error loading Asteroid")
+                    is RemoteError -> AsteroidViewResult.AsteroidPartialState.Error("Error loading Asteroid from Server")
                     else -> AsteroidViewResult.AsteroidPartialState.Error("Error loading Asteroid")
                 }
             }
