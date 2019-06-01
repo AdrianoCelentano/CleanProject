@@ -1,7 +1,6 @@
 package com.clean.asteroids
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -9,7 +8,6 @@ import com.clean.asteroids.config.CoreComponentProvider
 import com.clean.asteroids.config.DaggerPresentationComponent
 import com.clean.asteroids.config.PresentationComponent
 import com.clean.domain.asteroid.model.AsteroidViewEvent
-import com.clean.domain.asteroid.model.AsteroidViewResult.AsteroidViewEffect
 import com.clean.domain.asteroid.model.AsteroidViewState
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
@@ -29,6 +27,9 @@ class AsteroidActivity : AppCompatActivity() {
 
     @Inject
     lateinit var asteroidViewRenderer: AsteroidViewRenderer
+
+    @Inject
+    lateinit var asteroidEffectHandler: AsteroidEffectHandler
 
     private val asteroidViewModel: AsteroidViewModel by viewModels(::viewModelFactory)
 
@@ -81,19 +82,9 @@ class AsteroidActivity : AppCompatActivity() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onNext = { effect ->
-                    handleEffect(effect)
+                    asteroidEffectHandler.handleEffect(effect)
                 }
             ).addTo(disposables)
-    }
-
-    private fun handleEffect(effect: AsteroidViewEffect?) {
-        when (effect) {
-            is AsteroidViewEffect.UserMessage -> showToast(effect)
-        }
-    }
-
-    private fun showToast(effect: AsteroidViewEffect.UserMessage) {
-        Toast.makeText(this, effect.message, Toast.LENGTH_SHORT).show()
     }
 
     private fun StoreButtonObservable(): Observable<AsteroidViewEvent> {
