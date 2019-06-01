@@ -8,6 +8,7 @@ import dagger.Component
     modules = arrayOf(PresentationModule::class),
     dependencies = arrayOf(CoreComponent::class)
 )
+@ActivityScope
 interface PresentationComponent {
 
     fun inject(asteroidActivity: AsteroidActivity)
@@ -16,9 +17,9 @@ interface PresentationComponent {
     interface Builder {
 
         fun coreComponent(coreComponent: CoreComponent): Builder
+
         @BindsInstance
         fun activity(asteroidActivity: AsteroidActivity): Builder
-
 
         fun build(): PresentationComponent
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/RootLayout"
+        android:id="@+id/rootLayout"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,7 +9,7 @@
         tools:context=".AsteroidActivity">
 
     <TextView
-            android:id="@+id/Text"
+            android:id="@+id/asteroidTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -17,8 +17,8 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
-            app:layout_constraintTop_toBottomOf="@+id/Text"
-            android:id="@+id/Image"
+            app:layout_constraintTop_toBottomOf="@+id/asteroidTitle"
+            android:id="@+id/asteroidImage"
             android:layout_width="200dp"
             android:layout_height="200dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/RefreshButton"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Image"
+            app:layout_constraintTop_toBottomOf="@+id/asteroidImage"
             app:layout_constraintStart_toEndOf="@+id/StoreButton"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -39,13 +39,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/StoreButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Image"
+            app:layout_constraintTop_toBottomOf="@+id/asteroidImage"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toStartOf="@+id/RefreshButton"/>
 
     <ProgressBar
-            android:id="@+id/LoadingIndicator"
+            android:id="@+id/loadingIndicator"
             android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
