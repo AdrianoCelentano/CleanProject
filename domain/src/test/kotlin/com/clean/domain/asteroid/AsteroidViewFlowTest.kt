@@ -38,6 +38,25 @@ class AsteroidViewFlowTest {
         )
     }
 
+    @Test
+    fun `when event is refresh then return effect user message and partial states init, loading, new asteroid`() {
+        val (effects, viewstate) =
+            asteroidViewFlow.start(Observable.just(AsteroidViewEvent.Refresh))
+
+        val effectsSubscriber = effects.test()
+        effectsSubscriber.assertValueCount(1)
+            .assertValue(AsteroidViewResult.AsteroidViewEffect.UserMessage("message in a bottle"))
+
+        val viewStateSubscriber = viewstate.test()
+        viewStateSubscriber.assertValueCount(3)
+        viewStateSubscriber.assertValueAt(0, AsteroidViewState.init())
+        viewStateSubscriber.assertValueAt(1, AsteroidViewState.init().copy(loading = true))
+        viewStateSubscriber.assertValueAt(
+            2,
+            AsteroidViewState.init().copy(data = ViewData(Asteroid(title = "title", url = "imageUrl")))
+        )
+    }
+
     private fun asteroidViewFlow(): AsteroidViewFlow {
         return AsteroidViewFlow(
             AsteroidViewEventHandler(
