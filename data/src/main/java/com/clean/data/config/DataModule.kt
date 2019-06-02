@@ -1,8 +1,12 @@
 package com.clean.data.config
 
+import android.app.Application
+import androidx.room.Room
 import com.clean.data.BuildConfig
 import com.clean.data.NasaRepositoryImpl
 import com.clean.data.StringProviderImpl
+import com.clean.data.cache.DBConstants.DB_NAME
+import com.clean.data.cache.NasaDataBase
 import com.clean.data.remote.NasaService
 import com.clean.domain.asteroid.NasaRepository
 import com.clean.domain.asteroid.StringProvider
@@ -23,6 +27,16 @@ object DataModule {
     @Provides
     @JvmStatic
     fun provideIsDebug() = BuildConfig.DEBUG
+
+    @Provides
+    @JvmStatic
+    @DataSingleton
+    fun provideNasaDB(application: Application): NasaDataBase {
+        return Room.databaseBuilder(
+            application,
+            NasaDataBase::class.java, DB_NAME
+        ).build()
+    }
 
     @Provides
     @JvmStatic

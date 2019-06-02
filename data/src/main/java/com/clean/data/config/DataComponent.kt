@@ -5,8 +5,10 @@ import com.clean.domain.asteroid.NasaRepository
 import com.clean.domain.asteroid.StringProvider
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Scope
 
 @Component(modules = arrayOf(DataModule::class))
+@DataSingleton
 interface DataComponent {
 
     fun provideNasaRepository(): NasaRepository
@@ -21,3 +23,8 @@ interface DataComponent {
         fun build(): DataComponent
     }
 }
+
+@Scope
+@MustBeDocumented
+@Retention
+annotation class DataSingleton

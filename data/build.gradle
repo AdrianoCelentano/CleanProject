@@ -56,6 +56,10 @@ dependencies {
     implementation dataDependencies.retrofit
     implementation dataDependencies.retrofitConverter
     implementation dataDependencies.retrofitAdapter
+    implementation dataDependencies.roomRuntime
+    implementation dataDependencies.roomKotlin
+    implementation dataDependencies.roomRxJava
+    kapt dataDependencies.roomCompiler
     implementation dataDependencies.dagger
     kapt dataDependencies.daggerCompiler
     testImplementation dataTestDependencies.junit
