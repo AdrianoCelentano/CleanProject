@@ -9,10 +9,11 @@ class NasaApp : Application(), CoreComponentProvider {
 
     val appComponent: AppComponent by lazy {
         DaggerAppComponent.builder()
-            .dataComponent(DaggerDataComponent.builder().build())
-            .application(this)
+            .dataComponent(dataComponent())
             .build()
     }
+
+    private fun dataComponent() = DaggerDataComponent.builder().application(this).build()
 
     override fun provide(): CoreComponent {
         return appComponent

@@ -2,8 +2,10 @@ package com.clean.data.config
 
 import com.clean.data.BuildConfig
 import com.clean.data.NasaRepositoryImpl
+import com.clean.data.StringProviderImpl
 import com.clean.data.remote.NasaService
 import com.clean.domain.asteroid.NasaRepository
+import com.clean.domain.asteroid.StringProvider
 import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
@@ -68,4 +70,7 @@ interface DataBindsModule {
 
     @Binds
     fun bindNasaRepository(naseRepositoryImpl: NasaRepositoryImpl): NasaRepository
+
+    @Binds
+    fun bindStringProvider(stringProviderImpl: StringProviderImpl): StringProvider
 }

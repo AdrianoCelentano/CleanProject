@@ -97,8 +97,6 @@ class AsteroidActivity : AppCompatActivity() {
             .map { AsteroidViewEvent.Refresh }
     }
 
-
-
     private fun injectMembers() {
         component = DaggerPresentationComponent.builder()
             .activity(this)

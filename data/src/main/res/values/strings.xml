@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">data</string>
+    <string name="server_errror">"Error loading Asteroid from Server"</string>
+    <string name="general_errror">"Error loading Asteroid"</string>
+    <string name="store_asteroid_success">"Asteroid saved"</string>
+    <string name="message_in_a_bottle">"Message in a bottle"</string>
 </resources>
