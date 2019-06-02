@@ -43,7 +43,7 @@ class AsteroidViewRenderer @Inject constructor(private val activity: Activity) {
         hideErrorMessage()
         val asteroid = viewData.asteroid
         asteroidTitleTextView.text = asteroid.title
-        Glide.with(activity).load(asteroid.url).into(asteroidImage);
+        Glide.with(activity).load(asteroid.imageUrl).into(asteroidImage);
     }
 
     private fun showErrorMessage(errorMessage: String) {

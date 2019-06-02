@@ -6,6 +6,6 @@ import io.reactivex.Observable
 class NasaRepositoryFake : NasaRepository {
 
     override fun getAsteroidOfTheDay(): Observable<Asteroid> {
-        return Observable.just(Asteroid(title = "title", url = "imageUrl"))
+        return Observable.just(Asteroid(title = "title", imageUrl = "imageUrl"))
     }
 }

@@ -34,7 +34,7 @@ class AsteroidViewFlowTest {
         viewStateSubscriber.assertValueAt(1, AsteroidViewState.init().copy(loading = true))
         viewStateSubscriber.assertValueAt(
             2,
-            AsteroidViewState.init().copy(data = ViewData(Asteroid(title = "title", url = "imageUrl")))
+            AsteroidViewState.init().copy(data = ViewData(Asteroid(title = "title", imageUrl = "imageUrl")))
         )
     }
 
@@ -53,7 +53,7 @@ class AsteroidViewFlowTest {
         viewStateSubscriber.assertValueAt(1, AsteroidViewState.init().copy(loading = true))
         viewStateSubscriber.assertValueAt(
             2,
-            AsteroidViewState.init().copy(data = ViewData(Asteroid(title = "title", url = "imageUrl")))
+            AsteroidViewState.init().copy(data = ViewData(Asteroid(title = "title", imageUrl = "imageUrl")))
         )
     }
 
