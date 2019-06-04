@@ -11,4 +11,4 @@ interface NasaRepository {
     fun saveAsteroid(asteroid: Asteroid): Completable
 }
 
-class RemoteError(message: String) : Exception(message)
+class DataError(message: String) : Exception(message)

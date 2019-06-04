@@ -18,6 +18,8 @@ class SaveAsteroid @Inject constructor(
 
     override fun execute(event: AsteroidViewEvent.Store): Observable<AsteroidViewResult> {
         return Observable.concat(saveAsteroid(event), emitUserMessageEffect())
+            .onErrorReturnItem(AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError))
+            .doOnError { println(it.message) }
     }
 
     private fun saveAsteroid(event: AsteroidViewEvent.Store): Observable<AsteroidViewResult> {

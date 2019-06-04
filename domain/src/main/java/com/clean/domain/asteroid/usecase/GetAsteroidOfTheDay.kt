@@ -1,7 +1,6 @@
 package com.clean.domain.asteroid.usecase
 
 import com.clean.domain.asteroid.NasaRepository
-import com.clean.domain.asteroid.RemoteError
 import com.clean.domain.asteroid.StringProvider
 import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
@@ -19,12 +18,8 @@ class GetAsteroidOfTheDay @Inject constructor(
 
     override fun execute(event: AsteroidViewEvent.Load): Observable<AsteroidViewResult> {
         return Observable.concat(emitLoading(), emitAsteroid())
-            .onErrorReturn { throwable ->
-                when (throwable) {
-                    is RemoteError -> AsteroidViewResult.AsteroidPartialState.Error(stringProvider.serverError)
-                    else -> AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError)
-                }
-            }
+            .onErrorReturnItem(AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError))
+            .doOnError { println(it.message) }
     }
 
     private fun emitLoading(): Observable<AsteroidViewResult> {
