@@ -31,7 +31,7 @@ class AsteroidViewModel @Inject constructor(
 
     private val eventRelay: PublishRelay<AsteroidViewEvent> = PublishRelay.create()
 
-    private val eventEmitter get() = eventRelay.hide().startWith(AsteroidViewEvent.Init)
+    private val eventEmitter get() = eventRelay.hide().startWith(AsteroidViewEvent.Load)
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 

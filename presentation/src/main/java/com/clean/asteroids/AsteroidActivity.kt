@@ -95,7 +95,7 @@ class AsteroidActivity : AppCompatActivity() {
 
     private fun RefreshButtonObservable(): Observable<AsteroidViewEvent> {
         return RefreshButton.clicks()
-            .map { AsteroidViewEvent.Refresh }
+            .map { AsteroidViewEvent.Load }
     }
 
     private fun injectMembers() {

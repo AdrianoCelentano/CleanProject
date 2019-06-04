@@ -26,7 +26,7 @@ class AsteroidViewFlow @Inject constructor(
         eventToResultProcessor: AsteroidViewEventHandler
     ): Observable<AsteroidViewResult> {
         return doOnNext { println("flow intent: $it") }
-            .flatMap(eventToResultProcessor::process)
+            .flatMap(eventToResultProcessor::handleEvent)
             .doOnNext { println("flow result: $it") }
     }
 

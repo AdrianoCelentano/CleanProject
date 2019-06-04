@@ -2,7 +2,6 @@ package com.clean.domain.asteroid.usecase
 
 import com.clean.domain.asteroid.NasaRepository
 import com.clean.domain.asteroid.StringProvider
-import com.clean.domain.asteroid.model.Asteroid
 import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import io.reactivex.Observable
@@ -11,18 +10,19 @@ import javax.inject.Inject
 class SaveAsteroid @Inject constructor(
     private val nasaRepository: NasaRepository,
     private val stringProvider: StringProvider
-) : AsteroidUseCase<Asteroid> {
+) : AsteroidUseCase<AsteroidViewEvent.Store> {
 
-    override fun handlesEvent(asteroidViewEvent: AsteroidViewEvent): Boolean {
-        return asteroidViewEvent is AsteroidViewEvent.Store
+    override fun isForEvent(event: AsteroidViewEvent): Boolean {
+        return event is AsteroidViewEvent.Store
     }
 
-    override fun execute(params: Asteroid): Observable<AsteroidViewResult> {
-        return Observable.concat(saveAsteroid(params), emitUserMessageEffect())
+    override fun execute(event: AsteroidViewEvent.Store): Observable<AsteroidViewResult> {
+        return Observable.concat(saveAsteroid(event), emitUserMessageEffect())
     }
 
-    private fun saveAsteroid(asteroid: Asteroid): Observable<AsteroidViewResult>? =
-        nasaRepository.saveAsteroid(asteroid).toObservable()
+    private fun saveAsteroid(event: AsteroidViewEvent.Store): Observable<AsteroidViewResult> {
+        return nasaRepository.saveAsteroid(event.asteroid).toObservable()
+    }
 
     private fun emitUserMessageEffect(): Observable<AsteroidViewResult> {
         return Observable.just(AsteroidViewResult.AsteroidViewEffect.UserMessage(stringProvider.storeAsteroidSuccess))

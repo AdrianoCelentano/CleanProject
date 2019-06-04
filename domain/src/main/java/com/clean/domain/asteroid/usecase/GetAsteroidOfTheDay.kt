@@ -11,17 +11,13 @@ import javax.inject.Inject
 class GetAsteroidOfTheDay @Inject constructor(
     private val nasaRepository: NasaRepository,
     private val stringProvider: StringProvider
-) : AsteroidUseCase<Void?> {
+) : AsteroidUseCase<AsteroidViewEvent.Load> {
 
-    override fun handlesEvent(asteroidViewEvent: AsteroidViewEvent): Boolean {
-        return when (asteroidViewEvent) {
-            is AsteroidViewEvent.Init -> true
-            is AsteroidViewEvent.Refresh -> true
-            else -> false
-        }
+    override fun isForEvent(event: AsteroidViewEvent): Boolean {
+        return event is AsteroidViewEvent.Load
     }
 
-    override fun execute(params: Void?): Observable<AsteroidViewResult> {
+    override fun execute(event: AsteroidViewEvent.Load): Observable<AsteroidViewResult> {
         return Observable.concat(emitLoading(), emitAsteroid())
             .onErrorReturn { throwable ->
                 when (throwable) {

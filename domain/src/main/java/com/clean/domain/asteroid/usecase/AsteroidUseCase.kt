@@ -4,9 +4,10 @@ import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import io.reactivex.Observable
 
-interface AsteroidUseCase<in Params> {
+interface AsteroidUseCase<in T : AsteroidViewEvent> {
 
-    fun execute(params: Params): Observable<AsteroidViewResult>
+    fun execute(event: T): Observable<AsteroidViewResult>
 
-    fun handlesEvent(asteroidViewEvent: AsteroidViewEvent): Boolean
+    fun isForEvent(event: AsteroidViewEvent): Boolean
+
 }
