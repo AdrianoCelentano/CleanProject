@@ -1,8 +1,8 @@
 package com.clean.asteroids.config
 
-import com.clean.domain.asteroid.usecase.GetAsteroidOfTheDay
+import com.clean.domain.asteroid.AsteroidViewFlow
 
 interface CoreComponent {
 
-    fun provideGetAsteroidOfTheDay(): GetAsteroidOfTheDay
+    fun provideAsteriodFlow(): AsteroidViewFlow
 }

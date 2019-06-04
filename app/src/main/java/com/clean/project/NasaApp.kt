@@ -4,6 +4,7 @@ import android.app.Application
 import com.clean.asteroids.config.CoreComponent
 import com.clean.asteroids.config.CoreComponentProvider
 import com.clean.data.config.DaggerDataComponent
+import com.facebook.stetho.Stetho
 
 class NasaApp : Application(), CoreComponentProvider {
 
@@ -13,9 +14,14 @@ class NasaApp : Application(), CoreComponentProvider {
             .build()
     }
 
-    private fun dataComponent() = DaggerDataComponent.builder().application(this).build()
+    override fun onCreate() {
+        super.onCreate()
+        Stetho.initializeWithDefaults(this);
+    }
 
     override fun provide(): CoreComponent {
         return appComponent
     }
+
+    private fun dataComponent() = DaggerDataComponent.builder().application(this).build()
 }

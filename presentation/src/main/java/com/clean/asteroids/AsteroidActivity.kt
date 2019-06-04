@@ -89,7 +89,8 @@ class AsteroidActivity : AppCompatActivity() {
 
     private fun StoreButtonObservable(): Observable<AsteroidViewEvent> {
         return StoreButton.clicks()
-            .map { AsteroidViewEvent.Store }
+            .filter { asteroidViewModel.asteroidOfTheDay != null }
+            .map { AsteroidViewEvent.Store(asteroidViewModel.asteroidOfTheDay!!) }
     }
 
     private fun RefreshButtonObservable(): Observable<AsteroidViewEvent> {

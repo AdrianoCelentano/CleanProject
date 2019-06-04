@@ -7,7 +7,7 @@ import com.clean.data.cache.DBConstants.ASTEROID_TABLE_NAME
 @Entity(tableName = ASTEROID_TABLE_NAME)
 data class AsteroidEntity(
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    val id: Int = 0,
     val title: String? = null,
     val url: String? = null
 )

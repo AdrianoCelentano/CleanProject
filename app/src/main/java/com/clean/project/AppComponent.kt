@@ -2,7 +2,7 @@ package com.clean.project
 
 import com.clean.asteroids.config.CoreComponent
 import com.clean.data.config.DataComponent
-import com.clean.domain.asteroid.usecase.GetAsteroidOfTheDay
+import com.clean.domain.asteroid.AsteroidViewFlow
 import dagger.Component
 import javax.inject.Scope
 
@@ -13,7 +13,7 @@ import javax.inject.Scope
 )
 interface AppComponent : CoreComponent {
 
-    override fun provideGetAsteroidOfTheDay(): GetAsteroidOfTheDay
+    override fun provideAsteriodFlow(): AsteroidViewFlow
 
     @Component.Builder
     interface Builder {

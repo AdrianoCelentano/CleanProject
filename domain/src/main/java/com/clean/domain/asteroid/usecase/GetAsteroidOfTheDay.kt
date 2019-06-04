@@ -13,17 +13,13 @@ class GetAsteroidOfTheDay @Inject constructor(
 ) {
 
     fun execute(): Observable<AsteroidViewResult> {
-        return Observable.concat(emitLoading(), emitAsteroid(), emitUserMessageEffect())
+        return Observable.concat(emitLoading(), emitAsteroid())
             .onErrorReturn { throwable ->
                 when (throwable) {
                     is RemoteError -> AsteroidViewResult.AsteroidPartialState.Error(stringProvider.serverError)
                     else -> AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError)
                 }
             }
-    }
-
-    private fun emitUserMessageEffect(): Observable<AsteroidViewResult> {
-        return Observable.just(AsteroidViewResult.AsteroidViewEffect.UserMessage(stringProvider.messageInABottle))
     }
 
     private fun emitLoading(): Observable<AsteroidViewResult> {

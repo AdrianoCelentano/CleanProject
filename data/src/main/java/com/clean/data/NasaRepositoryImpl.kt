@@ -14,6 +14,7 @@ class NasaRepositoryImpl @Inject constructor(
     val nasaCache: NasaCache,
     private val asteroidMapper: AsteroidMapper
 ) : NasaRepository {
+
     override fun getAsteroidOfTheDay(): Observable<Asteroid> {
         return nasaRemote.getAsteroidOfTheDay().map { asteroidMapper.mapDataToDomain(it) }
     }

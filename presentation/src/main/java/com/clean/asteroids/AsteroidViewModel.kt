@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.clean.domain.asteroid.AsteroidViewFlow
+import com.clean.domain.asteroid.model.Asteroid
 import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import com.clean.domain.asteroid.model.AsteroidViewState
@@ -23,6 +24,8 @@ class AsteroidViewModel @Inject constructor(
         get() = viewStateMutableLive
 
     val viewEffectEmitter: Observable<AsteroidViewResult.AsteroidViewEffect>
+
+    val asteroidOfTheDay: Asteroid? get() = viewStateLive.value?.data?.asteroid
 
     private val viewStateMutableLive by lazy { MutableLiveData<AsteroidViewState>() }
 
