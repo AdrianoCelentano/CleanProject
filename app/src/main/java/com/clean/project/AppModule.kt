@@ -10,4 +10,5 @@ object AppModule {
 @Module
 interface AppBindsModule {
 
+
 }
