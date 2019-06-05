@@ -24,4 +24,9 @@ class NasaRepositoryImpl @Inject constructor(
             .map { asteroidMapper.mapDomaintoEntity(asteroid) }
             .flatMapCompletable { nasaCache.saveAsteroid(it) }
     }
+
+    override fun getSavedAsteroid(): Observable<List<Asteroid>> {
+        return nasaCache.getAsteroids()
+            .map { asteroids -> asteroids.map { asteroidMapper.mapEntitiyToDomain(it) } }
+    }
 }

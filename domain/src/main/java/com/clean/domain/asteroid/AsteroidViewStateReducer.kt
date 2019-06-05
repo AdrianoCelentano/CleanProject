@@ -17,10 +17,10 @@ class AsteroidViewStateReducer @Inject constructor() {
                         oldviewstate.copy(data = ViewData(result.asteroid), loading = false, errorMessage = null)
                     }
                     is AsteroidViewResult.AsteroidPartialState.Error -> {
-                        oldviewstate.copy(errorMessage = result.message, loading = false)
+                        oldviewstate.copy(errorMessage = result.message, loading = false, data = null)
                     }
                     AsteroidViewResult.AsteroidPartialState.Loading -> {
-                        oldviewstate.copy(loading = true)
+                        oldviewstate.copy(loading = true, data = null, errorMessage = null)
                     }
                 }
             }

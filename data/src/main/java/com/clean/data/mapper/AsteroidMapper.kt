@@ -20,4 +20,11 @@ class AsteroidMapper @Inject constructor() {
             url = domainAsteroid.imageUrl
         )
     }
+
+    fun mapEntitiyToDomain(asteroidEntity: AsteroidEntity): DomainAsteroid {
+        return DomainAsteroid(
+            title = asteroidEntity.title,
+            imageUrl = asteroidEntity.url
+        )
+    }
 }

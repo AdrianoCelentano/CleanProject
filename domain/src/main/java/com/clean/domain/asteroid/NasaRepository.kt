@@ -8,6 +8,8 @@ interface NasaRepository {
 
     fun getAsteroidOfTheDay(): Observable<Asteroid>
 
+    fun getSavedAsteroid(): Observable<List<Asteroid>>
+
     fun saveAsteroid(asteroid: Asteroid): Completable
 }
 
