@@ -1,7 +1,7 @@
 package com.clean.domain.asteroid.model
 
 data class AsteroidViewState(
-    val loading: Boolean? = false,
+    val loading: Boolean = false,
     val errorMessage: String? = null,
     val data: ViewData? = null
 ) {
