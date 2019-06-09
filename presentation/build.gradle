@@ -52,6 +52,8 @@ dependencies {
     def presentationDependencies = rootProject.ext.presentationDependencies
     def domainTestDependencies = rootProject.ext.presentationTestDependencies
 
+    implementation project(path: ':domain')
+    implementation presentationDependencies.material
     implementation presentationDependencies.appcompat
     implementation presentationDependencies.lifecycleExtensions
     implementation presentationDependencies.glide
@@ -66,14 +68,10 @@ dependencies {
     implementation presentationDependencies.rxRelay
     implementation presentationDependencies.rxAndroid
     implementation presentationDependencies.rxBindings
-    implementation dataDependencies.retrofitAdapter
-    implementation dataDependencies.dagger
-    kapt dataDependencies.daggerCompiler
+    implementation presentationDependencies.dagger
+    kapt presentationDependencies.daggerCompiler
 
     testImplementation domainTestDependencies.junit
     testImplementation domainTestDependencies.mockito
     testImplementation domainTestDependencies.assertj
-
-    implementation project(path: ':domain')
-    implementation 'com.google.android.material:material:1.0.0'
 }

@@ -31,32 +31,60 @@ class AsteroidViewRenderer @Inject constructor(private val activity: Activity) {
     private var errorSnackBar: Snackbar? = null
 
     fun render(asteroidViewState: AsteroidViewState) {
-        when {
-            asteroidViewState.loading == true -> showLoading()
-            asteroidViewState.errorMessage.isNullOrBlank().not() -> showErrorMessage(asteroidViewState.errorMessage!!)
-            asteroidViewState.data != null -> renderData(asteroidViewState.data!!)
+        renderLoading(asteroidViewState.loading)
+        renderData(asteroidViewState.data)
+        renderError(asteroidViewState.errorMessage)
+    }
+
+    private fun renderData(viewData: ViewData?) {
+        if (viewData != null) {
+            showData(viewData)
+        } else {
+            hideData()
         }
     }
 
-    private fun renderData(viewData: ViewData) {
-        hideLoading()
-        hideErrorMessage()
+    private fun renderError(errorMessage: String?) {
+        if (errorMessage.isNullOrBlank()) {
+            hideErrorMessage()
+        } else {
+            showErrorMessage(errorMessage)
+        }
+    }
+
+    private fun renderLoading(loading: Boolean) {
+        if (loading) {
+            showLoading()
+        } else {
+            hideLoading()
+        }
+    }
+
+    private fun hideData() {
+        asteroidTitleTextView.visibility = View.INVISIBLE
+        asteroidImage.visibility = View.INVISIBLE
+    }
+
+    private fun showData(viewData: ViewData) {
         val asteroid = viewData.asteroid
         asteroidTitleTextView.text = asteroid.title
         Glide.with(activity).load(asteroid.imageUrl).into(asteroidImage);
+        asteroidTitleTextView.visibility = View.VISIBLE
+        asteroidImage.visibility = View.VISIBLE
     }
 
     private fun showErrorMessage(errorMessage: String) {
         hideLoading()
+        hideData()
         showSnackBar(errorMessage)
-    }
-
-    private fun showLoading() {
-        loadingIndicator.visibility = View.VISIBLE
     }
 
     private fun hideErrorMessage() {
         errorSnackBar?.dismiss()
+    }
+
+    private fun showLoading() {
+        loadingIndicator.visibility = View.VISIBLE
     }
 
     private fun hideLoading() {

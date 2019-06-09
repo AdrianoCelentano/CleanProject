@@ -45,6 +45,7 @@ dependencies {
     def dataDependencies = rootProject.ext.dataDependencies
     def dataTestDependencies = rootProject.ext.dataTestDependencies
 
+    implementation project(":domain")
     implementation dataDependencies.javaxAnnotation
     implementation dataDependencies.javaxInject
     implementation dataDependencies.kotlin
@@ -65,6 +66,4 @@ dependencies {
     testImplementation dataTestDependencies.junit
     testImplementation dataTestDependencies.mockito
     testImplementation dataTestDependencies.assertj
-
-    implementation project(":domain")
 }

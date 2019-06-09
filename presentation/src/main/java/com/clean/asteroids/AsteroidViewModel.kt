@@ -1,6 +1,7 @@
 package com.clean.asteroids
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.clean.domain.asteroid.AsteroidViewFlow
@@ -20,14 +21,14 @@ class AsteroidViewModel @Inject constructor(
     asteroidViewFlow: AsteroidViewFlow
 ) : ViewModel() {
 
-    val viewStateLive
+    val viewStateLive: LiveData<AsteroidViewState>
         get() = viewStateMutableLive
+
+    private val viewStateMutableLive by lazy { MutableLiveData<AsteroidViewState>() }
 
     val viewEffectEmitter: Observable<AsteroidViewResult.AsteroidViewEffect>
 
     val asteroidOfTheDay: Asteroid? get() = viewStateLive.value?.data?.asteroid
-
-    private val viewStateMutableLive by lazy { MutableLiveData<AsteroidViewState>() }
 
     private val eventRelay: PublishRelay<AsteroidViewEvent> = PublishRelay.create()
 
@@ -52,7 +53,7 @@ class AsteroidViewModel @Inject constructor(
         viewStateEmitter
             .subscribeOn(Schedulers.io())
             .subscribeBy(
-                onNext = { viewState -> viewStateLive.postValue(viewState) },
+                onNext = { viewState -> viewStateMutableLive.postValue(viewState) },
                 onError = { error -> Log.e("qwer", "error viewstate", error) }
             ).addTo(disposables)
     }
