@@ -5,6 +5,8 @@ import com.clean.domain.asteroid.StringProvider
 import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import io.reactivex.Observable
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import javax.inject.Inject
 
 class GetAsteroidOfTheDay @Inject constructor(
@@ -16,18 +18,21 @@ class GetAsteroidOfTheDay @Inject constructor(
         return event is AsteroidViewEvent.Load
     }
 
-    override fun execute(event: AsteroidViewEvent.Load): Observable<AsteroidViewResult> {
-        return Observable.concat(emitLoading(), emitAsteroid())
-            .onErrorReturnItem(AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError))
-            .doOnError { println(it.message) }
+    override suspend fun execute(event: AsteroidViewEvent.Load): ReceiveChannel<AsteroidViewResult> {
+        val channel = Channel<AsteroidViewResult>()
+        try {
+            channel.send(AsteroidViewResult.AsteroidPartialState.Loading)
+            val asteroid = loadAsteroid()
+            channel.send(asteroid)
+        } catch (excpetion: Exception) {
+            println(excpetion.message)
+            channel.send(AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError))
+        }
+        return channel
     }
 
-    private fun emitLoading(): Observable<AsteroidViewResult> {
-        return Observable.just(AsteroidViewResult.AsteroidPartialState.Loading)
-    }
-
-    private fun emitAsteroid(): Observable<AsteroidViewResult> {
-        return nasaRepository.getAsteroidOfTheDay()
-            .map { AsteroidViewResult.AsteroidPartialState.NewAsteroid(it) }
+    suspend fun loadAsteroid(): AsteroidViewResult {
+        val asteroid = nasaRepository.getAsteroidOfTheDay()
+        return AsteroidViewResult.AsteroidPartialState.NewAsteroid(asteroid)
     }
 }

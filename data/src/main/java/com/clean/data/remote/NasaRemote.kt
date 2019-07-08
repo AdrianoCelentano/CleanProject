@@ -8,16 +8,14 @@ import javax.inject.Inject
 
 class NasaRemote @Inject constructor(private val nasaService: NasaService) {
 
-    fun getAsteroidOfTheDay(): Observable<Asteroid> {
-        return nasaService.getAsteroidOfTheDay()
-            .map { response ->
-                if (isResponseSuccessful(response)) {
-                    return@map response.body()!!
-                } else {
-                    val message = buildErrorMessage(response)
-                    throw DataError(message)
-                }
-            }
+    suspend fun getAsteroidOfTheDay(): Asteroid {
+        val response = nasaService.getAsteroidOfTheDay()
+        if (isResponseSuccessful(response)) {
+            return response.body()!!
+        } else {
+            val message = buildErrorMessage(response)
+            throw DataError(message)
+        }
     }
 
     private fun buildErrorMessage(response: Response<Asteroid>) =

@@ -8,6 +8,6 @@ import retrofit2.http.GET
 
 interface NasaService {
     @GET("apod?api_key=wSNEtcl1BcDve7JggX1VQgScHRoVSmQNcLvM1rI4")
-    fun getAsteroidOfTheDay(): Observable<Response<Asteroid>>
+    suspend fun getAsteroidOfTheDay(): Response<Asteroid>
 
 }

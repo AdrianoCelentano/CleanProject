@@ -6,11 +6,11 @@ import io.reactivex.Observable
 
 interface NasaRepository {
 
-    fun getAsteroidOfTheDay(): Observable<Asteroid>
+    suspend fun getAsteroidOfTheDay(): Asteroid
 
-    fun getSavedAsteroid(): Observable<List<Asteroid>>
+    suspend fun getSavedAsteroid(): List<Asteroid>
 
-    fun saveAsteroid(asteroid: Asteroid): Completable
+    suspend fun saveAsteroid(asteroid: Asteroid)
 }
 
 class DataError(message: String) : Exception(message)

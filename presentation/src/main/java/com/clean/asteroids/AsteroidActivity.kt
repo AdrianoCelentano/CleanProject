@@ -77,14 +77,14 @@ class AsteroidActivity : AppCompatActivity() {
     }
 
     private fun observeEffects() {
-        asteroidViewModel.viewEffectEmitter
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onNext = { effect ->
-                    asteroidEffectHandler.handleEffect(effect)
-                }
-            ).addTo(disposables)
+//        asteroidViewModel.viewEffectEmitter
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribeBy(
+//                onNext = { effect ->
+//                    asteroidEffectHandler.handleEffect(effect)
+//                }
+//            ).addTo(disposables)
     }
 
     private fun StoreButtonObservable(): Observable<AsteroidViewEvent> {

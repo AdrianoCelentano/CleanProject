@@ -4,30 +4,52 @@ import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import com.clean.domain.asteroid.model.AsteroidViewState
 import io.reactivex.Observable
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import sun.nio.ch.sctp.ResultContainer
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 class AsteroidViewFlow @Inject constructor(
     private val eventHandler: AsteroidViewEventHandler,
     private val viewStateReducer: AsteroidViewStateReducer
 ) {
 
-    fun start(
-        eventEmitter: Observable<AsteroidViewEvent>
-    ): Pair<Observable<AsteroidViewResult.AsteroidViewEffect>, Observable<AsteroidViewState>> {
-        val sharedResultEmitter = eventEmitter
-            .handleEvent(eventHandler)
-            .share()
-        val effectEmitter = effectEmitter(sharedResultEmitter)
-        val viewStateEmitter = viewStateEmitter(sharedResultEmitter, viewStateReducer)
-        return effectEmitter to viewStateEmitter
+    suspend fun start(
+        eventChannel: ReceiveChannel<AsteroidViewEvent>
+    ): ReceiveChannel<AsteroidViewState> {
+
+        val viewStateChannel = Channel<AsteroidViewState>()
+
+        coroutineScope {
+            for (event in eventChannel) {
+
+//                val resultChannel = handleEvent(event)
+
+//                for (result in resultChannel) {
+//                    println("flow result: $result")
+
+                    viewStateChannel.send(AsteroidViewState.init())
+//                }
+            }
+        }
+
+        return viewStateChannel
+
+//        val effectEmitter = effectEmitter(sharedResultEmitter)
+//        val viewStateEmitter = viewStateEmitter(sharedResultEmitter, viewStateReducer)
+//        return effectEmitter to viewStateEmitter
     }
 
-    private fun Observable<AsteroidViewEvent>.handleEvent(
-        eventToResultProcessor: AsteroidViewEventHandler
-    ): Observable<AsteroidViewResult> {
-        return doOnNext { println("flow intent: $it") }
-            .flatMap(eventToResultProcessor::handleEvent)
-            .doOnNext { println("flow result: $it") }
+    private suspend fun handleEvent(
+        event: AsteroidViewEvent
+    ): ReceiveChannel<AsteroidViewResult> {
+
+        println("flow intent: $event")
+        val channel = eventHandler.handleEvent(event)
+        return channel
     }
 
     private fun effectEmitter(

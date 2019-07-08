@@ -9,11 +9,11 @@ import io.reactivex.Observable
 interface AsteroidDao {
 
     @Query("SELECT * FROM ${ASTEROID_TABLE_NAME}")
-    fun getAll(): Observable<List<AsteroidEntity>>
+    suspend fun getAll(): List<AsteroidEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(asteroidEntity: AsteroidEntity): Completable
+    suspend fun insert(asteroidEntity: AsteroidEntity)
 
     @Delete
-    fun delete(asteroidEntity: AsteroidEntity): Completable
+    suspend fun delete(asteroidEntity: AsteroidEntity)
 }

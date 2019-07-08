@@ -5,8 +5,6 @@ import com.clean.data.mapper.AsteroidMapper
 import com.clean.data.remote.NasaRemote
 import com.clean.domain.asteroid.NasaRepository
 import com.clean.domain.asteroid.model.Asteroid
-import io.reactivex.Completable
-import io.reactivex.Observable
 import javax.inject.Inject
 
 class NasaRepositoryImpl @Inject constructor(
@@ -15,18 +13,18 @@ class NasaRepositoryImpl @Inject constructor(
     private val asteroidMapper: AsteroidMapper
 ) : NasaRepository {
 
-    override fun getAsteroidOfTheDay(): Observable<Asteroid> {
-        return nasaRemote.getAsteroidOfTheDay().map { asteroidMapper.mapDataToDomain(it) }
+    override suspend fun getAsteroidOfTheDay(): Asteroid {
+        val asteroid = nasaRemote.getAsteroidOfTheDay()
+        return asteroidMapper.mapDataToDomain(asteroid)
     }
 
-    override fun saveAsteroid(asteroid: Asteroid): Completable {
-        return Observable.just(asteroid)
-            .map { asteroidMapper.mapDomaintoEntity(asteroid) }
-            .flatMapCompletable { nasaCache.saveAsteroid(it) }
+    override suspend fun saveAsteroid(asteroid: Asteroid) {
+        val domainAsteroid = asteroidMapper.mapDomaintoEntity(asteroid)
+        nasaCache.saveAsteroid(domainAsteroid)
     }
 
-    override fun getSavedAsteroid(): Observable<List<Asteroid>> {
+    override suspend fun getSavedAsteroid(): List<Asteroid> {
         return nasaCache.getAsteroids()
-            .map { asteroids -> asteroids.map { asteroidMapper.mapEntitiyToDomain(it) } }
+            .map { asteroid -> asteroidMapper.mapEntitiyToDomain(asteroid) }
     }
 }

@@ -5,6 +5,8 @@ import com.clean.domain.asteroid.StringProvider
 import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import io.reactivex.Observable
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import javax.inject.Inject
 
 class SaveAsteroid @Inject constructor(
@@ -16,17 +18,24 @@ class SaveAsteroid @Inject constructor(
         return event is AsteroidViewEvent.Store
     }
 
-    override fun execute(event: AsteroidViewEvent.Store): Observable<AsteroidViewResult> {
-        return Observable.concat(saveAsteroid(event), emitUserMessageEffect())
-            .onErrorReturnItem(AsteroidViewResult.AsteroidViewEffect.UserMessage(stringProvider.generalError))
-            .doOnError { println(it.message) }
+    override suspend fun execute(event: AsteroidViewEvent.Store): ReceiveChannel<AsteroidViewResult> {
+
+        val channel = Channel<AsteroidViewResult>()
+        try {
+            saveAsteroid(event)
+            channel.send(userMessageEffect())
+        } catch (excpetion: Exception) {
+            println(excpetion.message)
+            channel.send(AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError))
+        }
+        return channel
     }
 
-    private fun saveAsteroid(event: AsteroidViewEvent.Store): Observable<AsteroidViewResult> {
-        return nasaRepository.saveAsteroid(event.asteroid).toObservable()
+    private suspend fun saveAsteroid(event: AsteroidViewEvent.Store) {
+        return nasaRepository.saveAsteroid(event.asteroid)
     }
 
-    private fun emitUserMessageEffect(): Observable<AsteroidViewResult> {
-        return Observable.just(AsteroidViewResult.AsteroidViewEffect.UserMessage(stringProvider.storeAsteroidSuccess))
+    private fun userMessageEffect(): AsteroidViewResult {
+        return AsteroidViewResult.AsteroidViewEffect.UserMessage(stringProvider.storeAsteroidSuccess)
     }
 }

@@ -54,6 +54,7 @@ dependencies {
 
     implementation presentationDependencies.appcompat
     implementation presentationDependencies.lifecycleExtensions
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M2'
     implementation presentationDependencies.glide
     implementation presentationDependencies.ktxFragment
     kapt presentationDependencies.glideCompiler

@@ -8,11 +8,11 @@ class NasaCache @Inject constructor(
     private val nasaDataBase: NasaDataBase
 ) {
 
-    fun saveAsteroid(asteroidEntity: AsteroidEntity): Completable {
+    suspend fun saveAsteroid(asteroidEntity: AsteroidEntity) {
         return nasaDataBase.asteroidDao().insert(asteroidEntity)
     }
 
-    fun getAsteroids(): Observable<List<AsteroidEntity>> {
+    suspend fun getAsteroids(): List<AsteroidEntity> {
         return nasaDataBase.asteroidDao().getAll()
     }
 }

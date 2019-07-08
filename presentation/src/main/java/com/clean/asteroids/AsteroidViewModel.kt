@@ -6,14 +6,10 @@ import androidx.lifecycle.ViewModel
 import com.clean.domain.asteroid.AsteroidViewFlow
 import com.clean.domain.asteroid.model.Asteroid
 import com.clean.domain.asteroid.model.AsteroidViewEvent
-import com.clean.domain.asteroid.model.AsteroidViewResult
 import com.clean.domain.asteroid.model.AsteroidViewState
-import com.jakewharton.rxrelay2.PublishRelay
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import javax.inject.Inject
 
 class AsteroidViewModel @Inject constructor(
@@ -23,42 +19,58 @@ class AsteroidViewModel @Inject constructor(
     val viewStateLive
         get() = viewStateMutableLive
 
-    val viewEffectEmitter: Observable<AsteroidViewResult.AsteroidViewEffect>
+//    val viewEffectEmitter: Observable<AsteroidViewResult.AsteroidViewEffect>
 
     val asteroidOfTheDay: Asteroid? get() = viewStateLive.value?.data?.asteroid
 
     private val viewStateMutableLive by lazy { MutableLiveData<AsteroidViewState>() }
 
-    private val eventRelay: PublishRelay<AsteroidViewEvent> = PublishRelay.create()
+    private val eventChannel = Channel<AsteroidViewEvent>()
 
-    private val eventEmitter get() = eventRelay.hide().startWith(AsteroidViewEvent.Load)
+    private val viewStateChannel = Channel<AsteroidViewState>()
 
-    private val disposables: CompositeDisposable = CompositeDisposable()
+    private val eventReceiver get() = eventChannel as ReceiveChannel<AsteroidViewEvent>
+
+    private val viewModelScope = CoroutineScope(Dispatchers.IO)
 
     init {
-        val (effectEmitter, viewStateEmitter) =
-            asteroidViewFlow.start(eventEmitter)
+        viewModelScope.launch {
+            val viewStateChannel = asteroidViewFlow.start(eventReceiver)
+            observeViewState(viewStateChannel)
+//            for (event in eventReceiver) {
+//                viewStateChannel.send(AsteroidViewState(loading = true))
+//                kotlinx.coroutines.delay(500)
+//                viewStateChannel.send(AsteroidViewState(loading = false))
+//            }
+        }
 
-        observeViewState(viewStateEmitter)
+        viewModelScope.launch {
+            observeViewState(viewStateChannel)
+        }
 
-        this.viewEffectEmitter = effectEmitter
+//        this.viewEffectEmitter = effectEmitter
     }
 
     fun processEvent(viewEvent: AsteroidViewEvent) {
-        eventRelay.accept(viewEvent)
+        viewModelScope.launch {
+            Log.d("qwer", "event: $viewEvent")
+            eventChannel.send(viewEvent)
+        }
     }
 
-    private fun observeViewState(viewStateEmitter: Observable<AsteroidViewState>) {
-        viewStateEmitter
-            .subscribeOn(Schedulers.io())
-            .subscribeBy(
-                onNext = { viewState -> viewStateLive.postValue(viewState) },
-                onError = { error -> Log.e("qwer", "error viewstate", error) }
-            ).addTo(disposables)
+    private suspend fun observeViewState(viewStateChannel: ReceiveChannel<AsteroidViewState>) {
+        for (viewState: AsteroidViewState in viewStateChannel) {
+            Log.d("qwer", "state: $viewState")
+            viewStateLive.postValue(viewState)
+        }
+//        for (viewState: AsteroidViewState in this.viewStateChannel) {
+//            viewStateLive.postValue(viewState)
+//        }
+//                onError = { error -> Log.e("qwer", "error viewstate", error) }
     }
 
     override fun onCleared() {
         super.onCleared()
-        disposables.clear()
+        viewModelScope.cancel()
     }
 }
