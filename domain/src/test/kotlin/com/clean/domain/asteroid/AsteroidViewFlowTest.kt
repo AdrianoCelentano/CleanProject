@@ -67,7 +67,7 @@ class AsteroidViewFlowTest {
 
         val viewStateSubscriber = viewstate.test()
         viewStateSubscriber.assertValueCount(3)
-        viewStateSubscriber.assertValueAt(0, AsteroidViewState.init())
+        viewStateSubscriber.assertValueAt(0, AsteroidViewState.initState())
         viewStateSubscriber.assertValueAt(1, { asteroidViewState -> isLoading(asteroidViewState) })
         viewStateSubscriber.assertValueAt(2, { asteroidViewState -> hasData(asteroidViewState) })
     }

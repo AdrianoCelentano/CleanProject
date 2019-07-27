@@ -6,7 +6,7 @@ data class AsteroidViewState(
     val data: ViewData? = null
 ) {
     companion object {
-        fun init(): AsteroidViewState {
+        fun initState(): AsteroidViewState {
             return AsteroidViewState(false, null, null)
         }
     }

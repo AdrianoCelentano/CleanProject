@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class AsteroidViewModel @Inject constructor(
     asteroidViewFlow: AsteroidViewFlow
-) : ViewModel() {
+) : ViewModel(), CoroutineScope by MainScope() {
 
     val viewStateLive
         get() = viewStateMutableLive
@@ -34,21 +34,8 @@ class AsteroidViewModel @Inject constructor(
     private val viewModelScope = CoroutineScope(Dispatchers.IO)
 
     init {
-        viewModelScope.launch {
-            val viewStateChannel = asteroidViewFlow.start(eventReceiver)
-            observeViewState(viewStateChannel)
-//            for (event in eventReceiver) {
-//                viewStateChannel.send(AsteroidViewState(loading = true))
-//                kotlinx.coroutines.delay(500)
-//                viewStateChannel.send(AsteroidViewState(loading = false))
-//            }
-        }
-
-        viewModelScope.launch {
-            observeViewState(viewStateChannel)
-        }
-
-//        this.viewEffectEmitter = effectEmitter
+        asteroidViewFlow.start(this, eventReceiver)
+        asteroidViewFlow.receiveEffectChannel
     }
 
     fun processEvent(viewEvent: AsteroidViewEvent) {
