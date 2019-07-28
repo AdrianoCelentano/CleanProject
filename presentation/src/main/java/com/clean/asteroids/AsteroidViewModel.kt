@@ -33,10 +33,16 @@ class AsteroidViewModel @Inject constructor(
     private val eventReceiver get() = eventChannel as ReceiveChannel<AsteroidViewEvent>
 
     init {
-        asteroidViewFlow.start(this, eventReceiver)
+        startFlow(asteroidViewFlow)
         effectChannel = asteroidViewFlow.receiveEffectChannel
         observeViewState(asteroidViewFlow.receiveViewStateChannel)
         processEvent(AsteroidViewEvent.Load)
+    }
+
+    private fun startFlow(asteroidViewFlow: AsteroidViewFlow) {
+        launch {
+            asteroidViewFlow.start(eventReceiver)
+        }
     }
 
     fun processEvent(viewEvent: AsteroidViewEvent) {

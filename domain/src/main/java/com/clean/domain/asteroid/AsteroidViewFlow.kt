@@ -3,10 +3,11 @@ package com.clean.domain.asteroid
 import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import com.clean.domain.asteroid.model.AsteroidViewState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapMerge
 import javax.inject.Inject
 
 class AsteroidViewFlow @Inject constructor(
@@ -16,38 +17,30 @@ class AsteroidViewFlow @Inject constructor(
 
     private var viewState: AsteroidViewState = AsteroidViewState.initState()
 
-    private val resultChannel: Channel<AsteroidViewResult> = Channel()
-
     private val effectChannel: Channel<AsteroidViewResult.AsteroidViewEffect> = Channel()
     val receiveEffectChannel get() = effectChannel as ReceiveChannel<AsteroidViewResult.AsteroidViewEffect>
 
     private val viewStateChannel: Channel<AsteroidViewState> = Channel()
     val receiveViewStateChannel get() = viewStateChannel as ReceiveChannel<AsteroidViewState>
 
-    fun start(
-        scope: CoroutineScope,
+    suspend fun start(
         eventChannel: ReceiveChannel<AsteroidViewEvent>
     ) {
-        observeEvents(scope, eventChannel)
-        observeResults(scope)
+        observeEvents(eventChannel)
     }
 
-    private fun observeEvents(scope: CoroutineScope, eventChannel: ReceiveChannel<AsteroidViewEvent>) {
-        scope.launch() {
+    private suspend fun observeEvents(eventChannel: ReceiveChannel<AsteroidViewEvent>) {
+        channelFlow() {
             for (event in eventChannel) {
-                println("mvi event: $event")
-                eventHandler.handleEvent(event, resultChannel)
+                send(event)
             }
-        }
-    }
-
-    private fun observeResults(scope: CoroutineScope) {
-        scope.launch() {
-            for (result in resultChannel) {
-                println("mvi result: $result")
-                handleResult(result)
+        }.flatMapMerge {
+            println("mvi event: $it")
+            return@flatMapMerge eventHandler.handleEvent(it)
+        }.collect {
+            println("mvi result: $it")
+            handleResult(it)
             }
-        }
     }
 
     private suspend fun handleResult(result: AsteroidViewResult) {
