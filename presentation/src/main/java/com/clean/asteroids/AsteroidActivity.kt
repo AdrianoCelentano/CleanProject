@@ -1,6 +1,7 @@
 package com.clean.asteroids
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -8,19 +9,17 @@ import com.clean.asteroids.config.CoreComponentProvider
 import com.clean.asteroids.config.DaggerPresentationComponent
 import com.clean.asteroids.config.PresentationComponent
 import com.clean.domain.asteroid.model.AsteroidViewEvent
+import com.clean.domain.asteroid.model.AsteroidViewResult
 import com.clean.domain.asteroid.model.AsteroidViewState
-import com.jakewharton.rxbinding2.view.clicks
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.lifecycle.Observer as LifecycleObserver
 
-class AsteroidActivity : AppCompatActivity() {
+class AsteroidActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -35,37 +34,20 @@ class AsteroidActivity : AppCompatActivity() {
 
     private var component: PresentationComponent? = null
 
-    private val disposables = CompositeDisposable()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         injectMembers()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        storeButtonListener()
+        refreshButtonListener()
         observeModel()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        observeEvents()
         observeEffects()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        disposables.clear()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         component = null
-    }
-
-    private fun observeEvents() {
-        Observable.merge<AsteroidViewEvent>(RefreshButtonObservable(), StoreButtonObservable())
-            .observeOn(Schedulers.io())
-            .subscribeBy(
-                onNext = { asteroidViewModel.processEvent(it) }
-            ).addTo(disposables)
+        cancel()
     }
 
     private fun observeModel() {
@@ -77,25 +59,27 @@ class AsteroidActivity : AppCompatActivity() {
     }
 
     private fun observeEffects() {
-//        asteroidViewModel.viewEffectEmitter
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribeBy(
-//                onNext = { effect ->
-//                    asteroidEffectHandler.handleEffect(effect)
-//                }
-//            ).addTo(disposables)
+        launch {
+            for (effect in asteroidViewModel.effectChannel) {
+                when (effect) {
+                    is AsteroidViewResult.AsteroidViewEffect.UserMessage -> {
+                        Toast.makeText(this@AsteroidActivity, effect.message, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
     }
 
-    private fun StoreButtonObservable(): Observable<AsteroidViewEvent> {
-        return StoreButton.clicks()
-            .filter { asteroidViewModel.asteroidOfTheDay != null }
-            .map { AsteroidViewEvent.Store(asteroidViewModel.asteroidOfTheDay!!) }
+    private fun storeButtonListener() {
+        StoreButton.setOnClickListener {
+            asteroidViewModel.processEvent(AsteroidViewEvent.Store(asteroidViewModel.asteroidOfTheDay!!))
+        }
     }
 
-    private fun RefreshButtonObservable(): Observable<AsteroidViewEvent> {
-        return RefreshButton.clicks()
-            .map { AsteroidViewEvent.Load }
+    private fun refreshButtonListener() {
+        RefreshButton.setOnClickListener {
+            asteroidViewModel.processEvent(AsteroidViewEvent.Load)
+        }
     }
 
     private fun injectMembers() {

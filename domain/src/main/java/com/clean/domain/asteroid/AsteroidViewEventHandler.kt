@@ -3,8 +3,7 @@ package com.clean.domain.asteroid
 import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
 import com.clean.domain.asteroid.usecase.AsteroidUseCase
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.SendChannel
 import javax.inject.Inject
 
 class AsteroidViewEventHandler @Inject constructor(
@@ -13,11 +12,11 @@ class AsteroidViewEventHandler @Inject constructor(
 
     suspend fun handleEvent(
         viewEvent: AsteroidViewEvent,
-        resultChannel: Channel<AsteroidViewResult>
-    ): ReceiveChannel<AsteroidViewResult> {
-        return useCases
+        resultChannel: SendChannel<AsteroidViewResult>
+    ) {
+        useCases
             .find { it.isForEvent(viewEvent) }
             .let { requireNotNull(it) { "No UseCase supports the ViewEvent: $viewEvent" } }
-            .execute(viewEvent)
+            .execute(viewEvent, resultChannel)
     }
 }

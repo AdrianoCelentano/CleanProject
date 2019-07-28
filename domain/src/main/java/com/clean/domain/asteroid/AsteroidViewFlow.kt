@@ -35,7 +35,7 @@ class AsteroidViewFlow @Inject constructor(
     private fun observeEvents(scope: CoroutineScope, eventChannel: ReceiveChannel<AsteroidViewEvent>) {
         scope.launch() {
             for (event in eventChannel) {
-                println("event: $event")
+                println("mvi event: $event")
                 eventHandler.handleEvent(event, resultChannel)
             }
         }
@@ -44,7 +44,7 @@ class AsteroidViewFlow @Inject constructor(
     private fun observeResults(scope: CoroutineScope) {
         scope.launch() {
             for (result in resultChannel) {
-                println("result: $result")
+                println("mvi result: $result")
                 handleResult(result)
             }
         }
@@ -53,12 +53,12 @@ class AsteroidViewFlow @Inject constructor(
     private suspend fun handleResult(result: AsteroidViewResult) {
         when (result) {
             is AsteroidViewResult.AsteroidViewEffect -> {
-                println("effect: $result")
+                println("mvi effect: $result")
                 effectChannel.send(result)
             }
             is AsteroidViewResult.AsteroidPartialState -> {
                 viewState = viewStateReducer.reduce(viewState, result)
-                println("viewstate: $viewState")
+                println("mvi viewstate: $viewState")
                 viewStateChannel.send(viewState)
             }
         }

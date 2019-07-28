@@ -4,9 +4,7 @@ import com.clean.domain.asteroid.NasaRepository
 import com.clean.domain.asteroid.StringProvider
 import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
-import io.reactivex.Observable
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.SendChannel
 import javax.inject.Inject
 
 class GetAsteroidOfTheDay @Inject constructor(
@@ -18,17 +16,18 @@ class GetAsteroidOfTheDay @Inject constructor(
         return event is AsteroidViewEvent.Load
     }
 
-    override suspend fun execute(event: AsteroidViewEvent.Load): ReceiveChannel<AsteroidViewResult> {
-        val channel = Channel<AsteroidViewResult>()
+    override suspend fun execute(
+        event: AsteroidViewEvent.Load,
+        resultChannel: SendChannel<AsteroidViewResult>
+    ) {
         try {
-            channel.send(AsteroidViewResult.AsteroidPartialState.Loading)
+            resultChannel.send(AsteroidViewResult.AsteroidPartialState.Loading)
             val asteroid = loadAsteroid()
-            channel.send(asteroid)
+            resultChannel.send(asteroid)
         } catch (excpetion: Exception) {
             println(excpetion.message)
-            channel.send(AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError))
+            resultChannel.send(AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError))
         }
-        return channel
     }
 
     suspend fun loadAsteroid(): AsteroidViewResult {

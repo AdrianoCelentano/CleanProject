@@ -4,9 +4,7 @@ import com.clean.domain.asteroid.NasaRepository
 import com.clean.domain.asteroid.StringProvider
 import com.clean.domain.asteroid.model.AsteroidViewEvent
 import com.clean.domain.asteroid.model.AsteroidViewResult
-import io.reactivex.Observable
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.SendChannel
 import javax.inject.Inject
 
 class SaveAsteroid @Inject constructor(
@@ -18,17 +16,18 @@ class SaveAsteroid @Inject constructor(
         return event is AsteroidViewEvent.Store
     }
 
-    override suspend fun execute(event: AsteroidViewEvent.Store): ReceiveChannel<AsteroidViewResult> {
+    override suspend fun execute(
+        event: AsteroidViewEvent.Store,
+        resultChannel: SendChannel<AsteroidViewResult>
+    ) {
 
-        val channel = Channel<AsteroidViewResult>()
         try {
             saveAsteroid(event)
-            channel.send(userMessageEffect())
+            resultChannel.send(userMessageEffect())
         } catch (excpetion: Exception) {
             println(excpetion.message)
-            channel.send(AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError))
+            resultChannel.send(AsteroidViewResult.AsteroidPartialState.Error(stringProvider.generalError))
         }
-        return channel
     }
 
     private suspend fun saveAsteroid(event: AsteroidViewEvent.Store) {
